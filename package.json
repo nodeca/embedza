@@ -1,0 +1,23 @@
+{
+  "name": "embedza",
+  "version": "0.0.0",
+  "description": "Generates site HTML snipets by URL.",
+  "keywords": [
+    "youtube",
+    "vimeo",
+    "oembed",
+    "opengraph"
+  ],
+  "repository": "nodeca/embedza",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "eslint": "0.18.0",
+    "eslint-plugin-nodeca": "^1.0.3",
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "make test"
+  }
+}
