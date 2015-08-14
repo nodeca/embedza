@@ -1,0 +1,14 @@
+-
+  url: https://www.youtube.com/watch?v=jNQXAC9IVRw
+  inline: <a class="ez-domain-youtube_com ez-inline" target="_blank" href="https://www.youtube.com/watch?v=jNQXAC9IVRw">[YouTube] Me at the zoo</a>
+  block: !!js/regexp /https:\/\/www.youtube.com\/embed\/jNQXAC9IVRw\?feature=oembed/
+-
+  url: https://vimeo.com/channels/staffpicks/135373919
+  inline: '<a class="ez-domain-vimeo_com ez-inline" target="_blank" href="https://vimeo.com/channels/staffpicks/135373919">[Vimeo] 20 Minutes of Kite Flying Time Collapsed: San Diego Study #6</a>'
+  block:
+    - !!js/regexp /https:\/\/player.vimeo.com\/video\/135373919/
+    - !!js/regexp '/padding-bottom: 56\.25%;/'
+-
+  url: http://rutube.ru/video/d3ff6da94622b4faa7dd75217488c35a/
+  inline: <a class="ez-domain-rutube_ru ez-inline" target="_blank" href="http://rutube.ru/video/d3ff6da94622b4faa7dd75217488c35a/">[rutube] Дивергент / Divergent (2014)</a>
+  block: !!js/regexp /https:\/\/rutube.ru\/play\/embed\/7533669\?isFullTab=true/

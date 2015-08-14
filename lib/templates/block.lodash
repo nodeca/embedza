@@ -1,0 +1,57 @@
+<%
+var player = _.find(self.snippets, function (snippet) {
+  return snippet.tags.indexOf('player') !== -1 && snippet.tags.indexOf('html5') !== -1;
+});
+
+var thumbnail = _.find(self.snippets, function (snippet) {
+  return snippet.tags.indexOf('thumbnail') !== -1;
+});
+
+var href = player.href;
+
+// Modify or set autoplay param. http://stackoverflow.com/questions/7517332
+if (player.media.autoplay) {
+  var param = player.media.autoplay.split('=');
+  var parts = self.utils.url.parse(href, true);
+
+  parts.query[param[0]] = param[1];
+  delete parts.search;
+  href = self.utils.url.format(parts);
+}
+
+var placeholder = '<iframe class="ez-player embed-responsive-item" src="' + _.escape(href) + '" allowfullscreen></iframe>';
+
+var duration;
+
+if (player.media.duration && player.media.duration > 0) {
+  var s = player.media.duration % 60;
+
+  duration = [
+    Math.floor(player.media.duration / 3600), // hours
+    Math.floor(player.media.duration / 60) % 60, // minutes
+    s < 10 ? '0' + s : s // seconds with leading '0'
+  ];
+
+  // Remove hours if video shorter than hour
+  if (duration[0] === 0) {
+    duration.shift();
+  }
+}
+%>
+
+<div class="ez-player-container ez-domain-<%= self.domain.replace(/\./g, '_') %> ez-block" data-placeholder="<%- placeholder %>">
+  <div class="embed-responsive" style="padding-bottom: <%= 100 / player.media.width * player.media.height %>%;">
+    <div class="ez-player-preview embed-responsive-item" style="background-image: url('<%- thumbnail.href %>');">
+      <% if (self.meta.title) { %>
+        <div class="ez-player-title">
+          <a target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
+        </div>
+      <% } %>
+      <div class="ez-player-button"></div>
+      <div class="ez-player-logo"></div>
+      <% if (duration) { %>
+        <div class="ez-player-duration"><%= duration.join(':') %></div>
+      <% } %>
+    </div>
+  </div>
+</div>

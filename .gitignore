@@ -1,3 +1,4 @@
+config/domains_conf.json
 node_modules
 doc
 *.log

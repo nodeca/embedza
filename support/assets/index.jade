@@ -1,0 +1,52 @@
+doctype html
+html
+  head
+    title Embedza demo
+
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+
+    script(src='https://cdn.jsdelivr.net/es5.shim/4.1.10/es5-shim.min.js')
+
+    script(src='https://cdn.jsdelivr.net/jquery/1.11.3/jquery.min.js')
+
+    script(src='https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js')
+    link(rel='stylesheet' href='https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.css')
+
+    link(rel='stylesheet' href='index.css')
+    link(rel='stylesheet' href='player.css')
+
+    script(src='player.js')
+
+    // Ancient IE support - load shiv
+    <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+  body
+    .container
+      h2 Url to Embedza
+
+      form(method='get')
+        .form-group
+          input.form-control(type='text' placeholder='url' name='url' value=url)
+        .form-group
+          input.btn.btn-default(type='submit' value='Submit')
+
+      if err
+        .alert.alert-danger(role='alert')!=err
+
+      if json
+        ul.nav.nav-tabs
+          li(role='presentation').active
+            a(href='#tab-block' role='role' data-toggle='tab') Block
+          li(role='presentation')
+            a(href='#tab-inline' role='role' data-toggle='tab') Inline
+          li(role='presentation')
+            a(href='#tab-json' role='role' data-toggle='tab') JSON
+        .tab-content
+          #tab-block.tab-pane.active(role='tabpanel')!=block
+          #tab-inline.tab-pane(role='tabpanel')!=inline
+          #tab-json.tab-pane(role='tabpanel')
+            pre!=json
