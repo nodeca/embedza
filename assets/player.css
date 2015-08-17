@@ -30,13 +30,15 @@
   padding: 0 15px;
   height: 50px;
   font-size: 18px;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #fff;
   text-shadow: 0 0 2px #000;
 }
 
 .ez-player-title a {
-  color: #ffffff;
+  color: #fff;
 }
 
 .ez-player-button {
