@@ -3,9 +3,20 @@ var player = _.find(self.snippets, function (snippet) {
   return snippet.tags.indexOf('player') !== -1 && snippet.tags.indexOf('html5') !== -1;
 });
 
-var thumbnail = _.find(self.snippets, function (snippet) {
-  return snippet.tags.indexOf('thumbnail') !== -1;
-});
+var properThumbnailWidth = 480;
+
+var thumbnail = _.chain(self.snippets)
+  // Get thumbnails
+  .filter(function (snippet) {
+    return snippet.tags.indexOf('thumbnail') !== -1;
+  })
+  // Sort by width (closest to `properThumbnailWidth`)
+  .sortBy(function (snippet) {
+    return Math.abs((snippet.media.width || 0) - properThumbnailWidth);
+  })
+  // Get first
+  .first()
+  .value();
 
 var href = player.href;
 
@@ -19,7 +30,7 @@ if (player.media.autoplay) {
   href = self.utils.url.format(parts);
 }
 
-var placeholder = '<iframe class="ez-player embed-responsive-item" src="' + _.escape(href) + '" allowfullscreen></iframe>';
+var placeholder = '<iframe class="ez-player-frame" src="' + _.escape(href) + '" allowfullscreen></iframe>';
 
 var duration;
 
@@ -39,21 +50,19 @@ if (player.media.duration && player.media.duration > 0) {
 }
 %>
 
-<div class="ez-player-container ez-domain-<%= self.domain.replace(/\./g, '_') %> ez-block" data-placeholder="<%- placeholder %>">
-  <div class="embed-responsive" style="padding-bottom: <%= 100 / player.media.width * player.media.height %>%;">
-    <div class="ez-player-preview embed-responsive-item" style="background-image: url('<%- thumbnail.href %>');">
-      <% if (self.meta.title) { %>
-        <div class="ez-player-header">
-          <div class="ez-player-title">
-            <a target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
-          </div>
+<div class="ez-player ez-domain-<%= self.domain.replace(/\./g, '_') %> ez-block" data-placeholder="<%- placeholder %>" style="padding-bottom: <%= _.round(100 / player.media.width * player.media.height, 4) %>%;">
+  <div class="ez-player-placeholder" style="background-image: url('<%- thumbnail.href %>');">
+    <% if (self.meta.title) { %>
+      <div class="ez-player-header">
+        <div class="ez-player-title">
+          <a target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
         </div>
-      <% } %>
-      <div class="ez-player-button"></div>
-      <div class="ez-player-logo"></div>
-      <% if (duration) { %>
-        <div class="ez-player-duration"><%= duration.join(':') %></div>
-      <% } %>
-    </div>
+      </div>
+    <% } %>
+    <div class="ez-player-button"></div>
+    <div class="ez-player-logo"></div>
+    <% if (duration) { %>
+      <div class="ez-player-duration"><%= duration.join(':') %></div>
+    <% } %>
   </div>
 </div>

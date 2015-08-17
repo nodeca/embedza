@@ -1,5 +1,6 @@
 globals:
   document: false
+  $: false
 
 rules:
   strict: 0
