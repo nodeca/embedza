@@ -8,24 +8,31 @@
 
 .ez-player-duration {
   position: absolute;
-  right: 10px;
+  right: 15px;
   bottom: 10px;
-  background: #000000;
-  opacity: 0.6;
-  padding: 2px 4px;
-  color: #ffffff;
+  color: #fff;
+  font-size: 16px;
+  text-shadow: 0 0 2px #000;
+}
+
+.ez-player-header {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 50px;
+  line-height: 50px;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0));
 }
 
 .ez-player-title {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  background: #000000;
-  opacity: 0.6;
-  padding: 2px 4px;
+  padding: 0 15px;
+  height: 50px;
+  font-size: 18px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  z-index: 20;
+  text-shadow: 0 0 2px #000;
 }
 
 .ez-player-title a {
@@ -33,12 +40,18 @@
 }
 
 .ez-player-button {
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSIyMHB4IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyMCAyMCIgd2lkdGg9IjIwcHgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48dGl0bGUvPjxkZXNjLz48ZGVmcy8+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSI+PGcgZmlsbD0iIzAwMDAwMCIgaWQ9Ikljb25zLUFWIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTY4LjAwMDAwMCwgLTg1LjAwMDAwMCkiPjxnIGlkPSJwbGF5LWNpcmNsZS1vdXRsaW5lIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNjguMDAwMDAwLCA4NS4wMDAwMDApIj48cGF0aCBkPSJNOCwxNC41IEwxNCwxMCBMOCw1LjUgTDgsMTQuNSBMOCwxNC41IFogTTEwLDAgQzQuNSwwIDAsNC41IDAsMTAgQzAsMTUuNSA0LjUsMjAgMTAsMjAgQzE1LjUsMjAgMjAsMTUuNSAyMCwxMCBDMjAsNC41IDE1LjUsMCAxMCwwIEwxMCwwIFogTTEwLDE4IEM1LjYsMTggMiwxNC40IDIsMTAgQzIsNS42IDUuNiwyIDEwLDIgQzE0LjQsMiAxOCw1LjYgMTgsMTAgQzE4LDE0LjQgMTQuNCwxOCAxMCwxOCBMMTAsMTggWiIgaWQ9IlNoYXBlIi8+PC9nPjwvZz48L2c+PC9zdmc+) no-repeat center center;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23000' fill-opacity='0.5' /%3E%3Cpath d='M396 238L184 116c-2-2-5-3-8-3-8 0-15 7-15 15v254c0 8 7 14 15 14l9-2 211-122c5-4 8-10 8-17s-3-13-8-17z' fill='%23eee' /%3E%3C/svg%3E");
+  background-size: cover;
   position: absolute;
-  background-size: 48px 48px;
-  left: 0px;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
+  left: 50%;
+  top: 50%;
+  width: 80px;
+  height: 80px;
+  margin-left: -40px;
+  margin-top: -40px;
   z-index: 10;
+}
+
+.ez-player-preview:hover .ez-player-button {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23000' fill-opacity='0.5' /%3E%3Cpath d='M396 238L184 116c-2-2-5-3-8-3-8 0-15 7-15 15v254c0 8 7 14 15 14l9-2 211-122c5-4 8-10 8-17s-3-13-8-17z' fill='%23fff' /%3E%3C/svg%3E");
 }

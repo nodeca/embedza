@@ -43,8 +43,10 @@ if (player.media.duration && player.media.duration > 0) {
   <div class="embed-responsive" style="padding-bottom: <%= 100 / player.media.width * player.media.height %>%;">
     <div class="ez-player-preview embed-responsive-item" style="background-image: url('<%- thumbnail.href %>');">
       <% if (self.meta.title) { %>
-        <div class="ez-player-title">
-          <a target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
+        <div class="ez-player-header">
+          <div class="ez-player-title">
+            <a target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
+          </div>
         </div>
       <% } %>
       <div class="ez-player-button"></div>
