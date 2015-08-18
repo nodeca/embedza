@@ -30,9 +30,15 @@ html
 
       form(method='get')
         .form-group
-          input.form-control(type='text' placeholder='URL' name='url' value=url)
-        .form-group
-          input.btn.btn-default(type='submit' value='Submit')
+          .input-group
+            input.form-control(
+              type='text'
+              placeholder='URL to embed'
+              name='url'
+              value=url
+            )
+            span.input-group-btn
+              button.btn.btn-primary(type='submit') Submit
 
       if err
         .alert.alert-danger(role='alert')!=err
