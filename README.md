@@ -95,9 +95,9 @@ If `Object` passed - create custom configuration:
 
 - __id__ (String) - provider ID (`youtube.com`)
 - __match__ ([RegExp]|RegExp) - patterns to match
-- __fetchers__ ([String]) - optional, array of fetchers dependency
-- __mixins__ ([String]) - optional, array of mixins dependency
-- __mixinsAfter__ ([String]) - optional, array of mixins after dependency
+- __fetchers__ ([String|Function|Object]) - optional, array of fetchers dependency
+- __mixins__ ([String|Function]) - optional, array of mixins dependency
+- __mixinsAfter__ ([String|Function]) - optional, array of mixins after dependency
 - __config__ (Object) - additional config: autoplay parameter name, API key
 
 
@@ -123,8 +123,8 @@ Add mixin (data handler). Options:
 Add post-processor "after" handler. The same as `.addMixin`, but handlers
 are axecuted after all mixins. Options:
 
-- id (String) - post-processor name.
-- fn (Function) - post-processor handler, `function (env, callback)`.
+- __id__ (String) - post-processor name.
+- __fn__ (Function) - post-processor handler, `function (env, callback)`.
 
 
 ## Advanced customization

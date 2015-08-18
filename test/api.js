@@ -192,27 +192,28 @@ describe('API', function () {
           /^https?:\/\/example.com\/.*/
         ],
         fetchers: [
-          'meta'
-        ],
-        fetchersExtra: [
+          'meta',
           function (env, cb) {
-            env.result.fetchersExtraTest = true;
+            env.result.fetchersExtraTest1 = true;
             cb();
+          },
+          {
+            fn: function (env, cb) {
+              env.result.fetchersExtraTest2 = true;
+              cb();
+            },
+            priority: 0
           }
         ],
         mixins: [
-          'twitter-thumbnail'
-        ],
-        mixinsExtra: [
+          'twitter-thumbnail',
           function (env, cb) {
             env.result.mixinsExtraTest = true;
             cb();
           }
         ],
         mixinsAfter: [
-          'ssl-force'
-        ],
-        mixinsAfterExtra: [
+          'ssl-force',
           function (env, cb) {
             env.result.mixinsAfterExtraTest = true;
             cb();
@@ -233,7 +234,8 @@ describe('API', function () {
           media: { width: 222, height: 333 }
         } ]);
 
-        assert.ok(res.fetchersExtraTest);
+        assert.ok(res.fetchersExtraTest1);
+        assert.ok(res.fetchersExtraTest2);
         assert.ok(res.mixinsExtraTest);
         assert.ok(res.mixinsAfterExtraTest);
 
