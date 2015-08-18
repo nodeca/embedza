@@ -14,21 +14,26 @@ Install
 npm install embedza --save
 ```
 
+run dev server (in module folder):
 
-Examples
---------
+```bash
+npm start
+```
 
+
+Example
+-------
 
 Render player for youtube video:
 
 ```javascript
 var embedza = require('embedza')();
 
-embedza.render('https://www.youtube.com/watch?v=jNQXAC9IVRw', 'block', function (err, html) {
+embedza.render('https://www.youtube.com/watch?v=JrZSfMiVC88', 'block', function (err, html) {
   if (err) {
     throw err;
   }
-  
+
   if (html) {
     console.log(html);
   }
@@ -42,65 +47,115 @@ API
 
 ### new Embedza(options)
 
+Creates new `Embedza` instance with specified options:
 
-__options (not mandatory):__
+- __enabledProviders__ - array of enabled providers or `true` for all providers,
+  default `true`.
+- __cache__ - object with `.get(key, callback)` and `.set(key, value, callback)`
+  methods. Default stub does nothing.
 
-- `enabledProviders`: array of enabled providers or `true` for all providers, default `true`
-- `cache`: cache class with `.get(key, callback)` and `.set(key, value, callback)`, default cache stub (do nothing)
 
-### Usage
+### .render(url, type, callback)
 
-- `.render(url, type, callback)` - render HTML snippet
-  - url (String) - content url
-  - type ([String]|String) - format name or list of suitable formats by priority ('block', 'inline')
-  - callback (Function) - `function (err, result)`
-    - `result.html`
-    - `result.type`
-- `.info(url, callback)` - get data for URL
-  - url (String) - resource URL
-  - callback (Function) - `function (err, result)`
-    - `result.domain` - domain plugin id ('youtube.com', 'vimeo.com', ...)
-    - `result.src` - source url
-    - `result.meta` - title, description, site
-    - `result.snippets` - snippets data: type, tags, href, media, html
-- `.forEach(fn)` - iterate through domains to modify it
-- `.rule(name)` - get domain rule by name
+Try to create HTML snippet of requested type by URL.
 
-### Customize
+- __url__ (String) - content url.
+- __type__ ([String]|String) - format name or list of suitable formats
+  by priority ('block', 'inline')
+- __callback__ (Function) - `function (err, result)`
+    - `result.html` - html code
+    - `result.type` - matched format type
 
-- `.request` - `function (url, options, callback)`. By default it is wrapper for [request](npmjs.com/packages/request)
-- templates: you can manage templates modify loader
-  ``` javascript
-  var _ = require('lodash');
-  var templates = require('embedza/lib/templates');
-  
-  templates['default_inline'] = _.template('...template code...', { variable: 'self' });
-  templates['youtube.com_block'] = _.template('...template code...', { variable: 'self' });
-  ```
-- `.addFetcher(options)` - add data fetcher
-  - options (Object)
-    - id (String) - fetcher id
-    - priority (Number) - optional, run priority, default `0`
-    - fn (Function) - fetcher handler - `function (env, callback)`
-- `.addMixin(options)` - add mixin (data handler)
-  - options (Object)
-    - id (String) - mixin id
-    - fn (Function) - mixin handler - `function (env, callback)`
-- `.addMixinAfter(options)` - add mixin after handler
-  - options (Object)
-    - id (String) - post id
-    - fn (Function) - post handler - `function (env, callback)`
-- `.addDomain(options)` - enable domain with default rules or add custom one
-  - options (Object|String)
-    - id (String) - provider ID (`youtube.com`)
-    - match ([RegExp]|RegExp) - patterns to match
-    - fetchers ([String]) - optional, array of fetchers dependency
-    - fetchersExtra ([Object]) - custom fetchers
-    - mixins ([String]) - optional, array of mixins dependency
-    - mixinsExtra ([Function]) - custom mixins
-    - mixinsAfter ([String]) - optional, array of mixins after dependency
-    - mixinsAfterExtra ([Function]) - custom mixins after
-    - config (Object) - additional config: autoplay parameter name, API key
+### .info(url, callback)
+
+Similar to `.render()`, but returns object with full url description.
+
+- __url__ (String) - resource URL.
+- __callback__ (Function) - `function (err, result)`, result is:
+  - `result.domain` - domain plugin id ('youtube.com', 'vimeo.com', ...)
+  - `result.src` - source url
+  - `result.meta` - title, description, site
+  - `result.snippets` - snippets data: type, tags, href, media, html
+
+
+### .forEach(fn(rule))
+
+Iterates through domains rules to modify those.
+
+
+### .rule(name)
+
+Get domain rule by name.
+
+
+### .addDomain(options)
+
+Rerister new service. If `String` passed - enable domain with default rules.
+If `Object` passed - create custom configuration:
+
+- __id__ (String) - provider ID (`youtube.com`)
+- __match__ ([RegExp]|RegExp) - patterns to match
+- __fetchers__ ([String]) - optional, array of fetchers dependency
+- __mixins__ ([String]) - optional, array of mixins dependency
+- __mixinsAfter__ ([String]) - optional, array of mixins after dependency
+- __config__ (Object) - additional config: autoplay parameter name, API key
+
+
+### .addFetcher(options)
+
+Add add data fetcher. Options:
+
+- __id__ (String) - fetcher name.
+- __priority__ (Number) - optional, run priority, default - `0`.
+- __fn__ (Function) - fetcher handler, `function (env, callback)`.
+
+
+### .addMixin(options)
+
+Add mixin (data handler). Options:
+
+- __id__ (String) - mixin name.
+- __fn__ (Function) - mixin handler, `function (env, callback)`.
+
+
+### .addMixinAfter(options)
+
+Add post-processor "after" handler. The same as `.addMixin`, but handlers
+are axecuted after all mixins. Options:
+
+- id (String) - post-processor name.
+- fn (Function) - post-processor handler, `function (env, callback)`.
+
+
+## Advanced customization
+
+### .request()
+
+By default it's a wrapper for [request](npmjs.com/packages/request). You can
+override it. For example to force use cache only.
+
+
+### Templates
+
+Manage available templates:
+
+```js
+var _ = require('lodash');
+var templates = require('embedza/lib/templates');
+
+templates['default_inline'] = _.template('...template code...', { variable: 'self' });
+templates['youtube.com_block'] = _.template('...template code...', { variable: 'self' });
+```
+
+
+Similar projects
+----------------
+
+- [iframely](https://github.com/itteco/iframely)
+- [onebox](https://github.com/discourse/onebox)
+
+Embedza is inspired by projects above, but designed to satisfy our requirements.
+
 
 License
 -------
