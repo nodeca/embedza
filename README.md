@@ -148,6 +148,35 @@ templates['youtube.com_block'] = _.template('...template code...', { variable: '
 ```
 
 
+Debug
+-----
+
+If you assign environment variable `DEBUG` to `embedza:*`, you will see debug message for every action.
+
+Output example for `DEBUG=embedza:* mocha`:
+
+```
+...
+API
+embedza:common init +9ms
+embedza:common init: done +0ms
+embedza:common render +0ms
+embedza:common info +1ms
+embedza:common __buildCache__ +1ms
+embedza:common __buildCache__: done +2ms
+embedza:common render: load done +1ms
+  ✓ .addFetcher()
+...
+```
+
+Possible `DEBUG` variable values:
+
+- `embedza:common`
+- `embedza:fetchers`
+- `embedza:mixins`
+- `embedza:mixins_after`
+
+
 Similar projects
 ----------------
 
