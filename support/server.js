@@ -9,7 +9,21 @@ var path    = require('path');
 var Embedza = require('../');
 
 
-var embedza = new Embedza();
+var cache = {
+  data: {},
+  get: function (key, callback) {
+    callback(null, cache.data[key]);
+  },
+  set: function (key, value, callback) {
+    cache.data[key] = value;
+    callback(null);
+  }
+};
+
+var embedza = new Embedza({
+  cache: cache
+});
+
 
 express()
   .use(express.static(path.join(__dirname, 'assets')))
