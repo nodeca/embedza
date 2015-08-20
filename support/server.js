@@ -34,26 +34,26 @@ express()
     var url = req.query.url;
 
     if (url) {
-      embedza.render(url, 'block', function (err, block) {
+      embedza.info(url, function (err, data) {
         if (err) {
           res.render('index', { err: err.toString(), url: url });
           return;
         }
 
-        embedza.render(url, 'inline', function (err, inline) {
+        embedza.render(data, 'block', function (err, block) {
           if (err) {
             res.render('index', { err: err.toString(), url: url });
             return;
           }
 
-          embedza.info(url, function (err, json) {
+          embedza.render(data, 'inline', function (err, inline) {
             if (err) {
               res.render('index', { err: err.toString(), url: url });
               return;
             }
 
             res.render('index', {
-              json: json ? JSON.stringify(json, null, 2) : null,
+              json: data ? JSON.stringify(data, null, 2) : null,
               inline: inline ? inline.html : null,
               block: block ? block.html : null,
               url: url
@@ -61,6 +61,7 @@ express()
           });
         });
       });
+
       return;
     }
 

@@ -59,7 +59,7 @@ Creates new `Embedza` instance with specified options:
 
 Try to create HTML snippet of requested type by URL.
 
-- __url__ (String) - content url.
+- __url__ (String|Object) - content url or result of `.info()`.
 - __type__ ([String]|String) - format name or list of suitable formats
   by priority ('block', 'inline')
 - __callback__ (Function) - `function (err, result)`
