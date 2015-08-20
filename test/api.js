@@ -146,7 +146,7 @@ describe('API', function () {
         callback(null, { statusCode: 200 }, '');
       };
 
-      embedza.info('https://example.com', function (err, res) {
+      embedza.info('https://example.com/', function (err, res) {
         if (err) {
           done(err);
           return;
@@ -156,13 +156,13 @@ describe('API', function () {
 
         embedza.addDomain('example.com');
 
-        embedza.info('https://example.com', function (err, res) {
+        embedza.info('https://example.com/', function (err, res) {
           if (err) {
             done(err);
             return;
           }
 
-          assert.strictEqual(res.src, 'https://example.com');
+          assert.strictEqual(res.src, 'https://example.com/');
           done();
         });
       });
