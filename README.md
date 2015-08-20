@@ -141,10 +141,14 @@ Manage available templates:
 
 ```js
 var _ = require('lodash');
-var templates = require('embedza/lib/templates');
+var embedza = require('embedza')();
 
-templates['default_inline'] = _.template('...template code...', { variable: 'self' });
-templates['youtube.com_block'] = _.template('...template code...', { variable: 'self' });
+// Customize templates
+embedza.templates['default_inline'] = _.template('...template code...', { variable: 'self' });
+embedza.templates['youtube.com_player'] = _.template('...template code...', { variable: 'self' });
+
+// Customize template aliases
+embedza.aliases.block = [ 'player', 'photo' ];
 ```
 
 

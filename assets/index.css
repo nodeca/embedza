@@ -1,4 +1,4 @@
-.ez-player {
+.ez-block {
   position: relative;
   display: block;
   height: 0;
@@ -33,7 +33,7 @@
   transform: scale(1.03, 1.03);
 }
 
-.ez-player-frame {
+.ez-block-frame {
   position: absolute;
   top: 0;
   bottom: 0;
