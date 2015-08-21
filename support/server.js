@@ -40,6 +40,11 @@ express()
           return;
         }
 
+        if (!data) {
+          res.render('index', { url: url });
+          return;
+        }
+
         embedza.render(data, 'block', function (err, block) {
           if (err) {
             res.render('index', { err: err.toString(), url: url });
@@ -53,7 +58,7 @@ express()
             }
 
             res.render('index', {
-              json: data ? JSON.stringify(data, null, 2) : null,
+              json: JSON.stringify(data, null, 2),
               inline: inline ? inline.html : null,
               block: block ? block.html : null,
               url: url
