@@ -1,0 +1,1 @@
+Logos source: https://github.com/samcollins/css-social-buttons/, MIT License.
