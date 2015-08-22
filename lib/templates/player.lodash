@@ -56,7 +56,7 @@ if (player.media.duration && player.media.duration > 0) {
     <% if (self.meta.title) { %>
       <div class="ez-player-header">
         <div class="ez-player-title">
-          <a target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
+          <a target="_blank" href="<%- self.src %>" rel="nofollow"><%- self.meta.title %></a>
         </div>
       </div>
     <% } %>

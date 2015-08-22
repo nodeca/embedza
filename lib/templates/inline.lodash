@@ -1,1 +1,1 @@
-<a class="ez-domain-<%= self.domain.replace(/\./g, '_') %> ez-inline" target="_blank" href="<%- self.src %>"><%- self.meta.title %></a>
+<a class="ez-domain-<%= self.domain.replace(/\./g, '_') %> ez-inline" target="_blank" href="<%- self.src %>" rel="nofollow"><%- self.meta.title %></a>
