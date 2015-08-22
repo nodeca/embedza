@@ -12,3 +12,7 @@
   url: http://rutube.ru/video/d3ff6da94622b4faa7dd75217488c35a/
   inline: <a class="ez-domain-rutube_ru ez-inline" target="_blank" href="http://rutube.ru/video/d3ff6da94622b4faa7dd75217488c35a/">Дивергент / Divergent (2014)</a>
   block: !!js/regexp /https:\/\/rutube.ru\/play\/embed\/7533669\?isFullTab=true/
+-
+  url: https://vimeo.com/channels/staffpicks/136692675
+  inline: <a class="ez-domain-vimeo_com ez-inline" target="_blank" href="https://vimeo.com/channels/staffpicks/136692675">Subway Love</a>
+  block: !!js/regexp /https:\/\/player.vimeo.com\/video\/136692675/
