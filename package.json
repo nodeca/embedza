@@ -1,7 +1,7 @@
 {
   "name": "embedza",
-  "version": "0.0.0",
-  "description": "Generates site HTML snipets by URL.",
+  "version": "1.0.0",
+  "description": "Generates site HTML snippets by URL.",
   "keywords": [
     "youtube",
     "vimeo",
