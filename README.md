@@ -4,7 +4,17 @@ embedza
 [![Build Status](https://img.shields.io/travis/nodeca/embedza/master.svg?style=flat)](https://travis-ci.org/nodeca/embedza)
 [![NPM version](https://img.shields.io/npm/v/embedza.svg?style=flat)](https://www.npmjs.org/package/embedza)
 
-> Generates site HTML snippets by URL.
+> Generates HTML snippets by URL.
+
+Key feature:
+
+- Supports both block & inline snippets (by default extracts data from oembed,
+  opengraph and meta tags).
+- Light placeholders for video players to load page without delays. Iframes are
+  loaded only after user clicks "play" button.
+- Cacheing.
+- Easy to customize and extend.
+- Dev server to test your changes.
 
 
 Install
@@ -14,7 +24,7 @@ Install
 npm install embedza --save
 ```
 
-run dev server (with debug message, in module folder):
+run dev server (with debug messages):
 
 ```bash
 DEBUG=embedza:* npm start
