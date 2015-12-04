@@ -24,9 +24,10 @@
   "devDependencies": {
     "eslint": "0.18.0",
     "eslint-plugin-nodeca": "^1.0.3",
-    "mocha": "^2.2.5",
+    "express": "^4.13.1",
+    "istanbul": "^0.4.1",
     "jade": "^1.11.0",
-    "express": "^4.13.1"
+    "mocha": "^2.2.5"
   },
   "scripts": {
     "test": "make test",

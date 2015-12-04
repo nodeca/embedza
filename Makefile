@@ -1,5 +1,3 @@
-PATH        := ./node_modules/.bin:${PATH}
-
 NPM_PACKAGE := $(shell node -e 'console.log(require("./package.json").name)')
 NPM_VERSION := $(shell node -e 'console.log(require("./package.json").version)')
 
@@ -20,11 +18,15 @@ help:
 
 
 lint:
-	eslint --reset .
+	./node_modules/.bin/eslint --reset .
 
 
 test: lint
-	mocha
+	./node_modules/.bin/mocha
+
+coverage:
+	rm -rf coverage
+	./node_modules/.bin/istanbul cover node_modules/.bin/_mocha
 
 
 publish:
