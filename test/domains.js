@@ -15,13 +15,14 @@ describe('domains', function () {
   var embedza = new Embedza();
 
 
-  it('templates', function (done) {
-    async.each(fixtures, function (data, next) {
+  fixtures.forEach(function (data) {
+
+    it(data.url, function (done) {
 
       // Render inline template for url
       embedza.render(data.url, 'inline', function (err, result) {
         if (err) {
-          next(err);
+          done(err);
           return;
         }
 
@@ -44,7 +45,7 @@ describe('domains', function () {
         // Render block template
         embedza.render(data.url, 'block', function (err, result) {
           if (err) {
-            next(err);
+            done(err);
             return;
           }
 
@@ -64,11 +65,10 @@ describe('domains', function () {
             assert.strictEqual(result.html, data.block);
           }
 
-          next();
+          done();
         });
       });
-    }, function (err) {
-      done(err);
     });
+
   });
 });
