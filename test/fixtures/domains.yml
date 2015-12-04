@@ -16,3 +16,8 @@
   url: https://vimeo.com/channels/staffpicks/136692675
   inline: <a class="ez-domain-vimeo_com ez-inline" target="_blank" href="https://vimeo.com/channels/staffpicks/136692675" rel="nofollow">Subway Love</a>
   block: !!js/regexp /https:\/\/player.vimeo.com\/video\/136692675/
+-
+  # description is with astral characters, check that we parse them correctly
+  url: http://www.youtube.com/watch?v=1DSmex4IPxg
+  inline: <a class="ez-domain-youtube_com ez-inline" target="_blank" href="http://www.youtube.com/watch?v=1DSmex4IPxg" rel="nofollow">Аэрошоу вертолёты,танки,машины!взрывы!0_0 ПОСТАВЬ 👍🏻!</a>
+  block: !!js/regexp /https:\/\/www.youtube.com\/embed\/1DSmex4IPxg\?feature=oembed/
