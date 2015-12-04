@@ -18,7 +18,9 @@ describe('API', function () {
       }
     });
 
-    embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block', function (err) {
+    embedza.addDomain('example.org');
+
+    embedza.render('http://example.org/12345', 'block', function (err) {
       assert.strictEqual(err, 'test fetcher error');
       done();
     });
@@ -42,7 +44,7 @@ describe('API', function () {
         opt = null;
       }
 
-      callback(null, { statusCode: 200 }, '');
+      callback(null, { statusCode: 200 }, '{}');
     };
 
     embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block', function (err) {
@@ -69,7 +71,7 @@ describe('API', function () {
         opt = null;
       }
 
-      callback(null, { statusCode: 200 }, '');
+      callback(null, { statusCode: 200 }, '{}');
     };
 
     embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block', function (err) {
@@ -107,7 +109,7 @@ describe('API', function () {
         opt = null;
       }
 
-      callback(null, { statusCode: 200 }, '');
+      callback(null, { statusCode: 200 }, '{}');
     };
 
     embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw', function (err, res) {
