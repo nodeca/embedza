@@ -21,3 +21,11 @@
   url: http://www.youtube.com/watch?v=1DSmex4IPxg
   inline: <a class="ez-domain-youtube_com ez-inline" target="_blank" href="http://www.youtube.com/watch?v=1DSmex4IPxg" rel="nofollow">Аэрошоу вертолёты,танки,машины!взрывы!0_0 ПОСТАВЬ 👍🏻!</a>
   block: !!js/regexp /https:\/\/www.youtube.com\/embed\/1DSmex4IPxg\?feature=oembed/
+-
+  url: http://m.youtube.com/watch?&v=jNQXAC9IVRw
+  inline: <a class="ez-domain-youtube_com ez-inline" target="_blank" href="http://m.youtube.com/watch?&amp;v=jNQXAC9IVRw" rel="nofollow">Me at the zoo</a>
+  block: !!js/regexp /https:\/\/www.youtube.com\/embed\/jNQXAC9IVRw\?feature=oembed/
+-
+  url: http://m.youtube.com/#/watch?v=jNQXAC9IVRw
+  inline: <a class="ez-domain-youtube_com ez-inline" target="_blank" href="http://m.youtube.com/#/watch?v=jNQXAC9IVRw" rel="nofollow">Me at the zoo</a>
+  block: !!js/regexp /https:\/\/www.youtube.com\/embed\/jNQXAC9IVRw\?feature=oembed/

@@ -5,13 +5,13 @@ var assert   = require('assert');
 var fs       = require('fs');
 var yaml     = require('js-yaml');
 var path     = require('path');
-var fixtures = yaml.load(fs.readFileSync(path.join(__dirname, 'fixtures', 'domains.yml')));
+var fixtures = yaml.load(fs.readFileSync(path.join(__dirname, 'fixtures', 'patterns.yml')));
 var async    = require('async');
 var _        = require('lodash');
 var Embedza  = require('..');
 
 
-describe('domains', function () {
+describe('patterns', function () {
   var embedza = new Embedza();
 
 
