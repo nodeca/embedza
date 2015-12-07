@@ -1,3 +1,10 @@
+1.0.3 / 2015-12-07
+------------------
+
+- Enchanced error info with `code` & `status` properties.
+- Added missed rules to youtube & vimeo.
+
+
 1.0.2 / 2015-12-04
 ------------------
 
