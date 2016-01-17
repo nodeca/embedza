@@ -1,18 +1,18 @@
 'use strict';
 
 
-var assert   = require('assert');
-var fs       = require('fs');
-var yaml     = require('js-yaml');
-var path     = require('path');
-var fixtures = yaml.load(fs.readFileSync(path.join(__dirname, 'fixtures', 'patterns.yml')));
-var async    = require('async');
-var _        = require('lodash');
-var Embedza  = require('..');
+const assert   = require('assert');
+const fs       = require('fs');
+const yaml     = require('js-yaml');
+const path     = require('path');
+const fixtures = yaml.load(fs.readFileSync(path.join(__dirname, 'fixtures', 'patterns.yml')));
+const async    = require('async');
+const _        = require('lodash');
+const Embedza  = require('..');
 
 
 describe('patterns', function () {
-  var embedza = new Embedza();
+  let embedza = new Embedza();
 
 
   fixtures.forEach(function (data) {

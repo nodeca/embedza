@@ -4,16 +4,16 @@
 /* eslint-disable no-console */
 
 
-var http    = require('http');
-var fs      = require('fs');
-var path    = require('path');
+const http    = require('http');
+const fs      = require('fs');
+const path    = require('path');
 
 
-var URL = 'http://iframely.com/qa/whitelist.json';
-var SAVE_PATH = path.join(__dirname, '..', 'config', 'domains_conf.json');
+const URL = 'http://iframely.com/qa/whitelist.json';
+const SAVE_PATH = path.join(__dirname, '..', 'config', 'domains_conf.json');
 
 
-var stat;
+let stat;
 
 try {
   stat = fs.statSync(SAVE_PATH);
@@ -33,7 +33,7 @@ http.get(URL, function (res) {
     process.exit(1);
   }
 
-  var data = [];
+  let data = [];
 
   res.setEncoding('binary');
 

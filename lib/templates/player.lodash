@@ -1,5 +1,5 @@
 <%
-var player = _.find(self.snippets, function (snippet) {
+var player = _.find(self.snippets, snippet => {
   return snippet.tags.indexOf('player') !== -1 && snippet.tags.indexOf('html5') !== -1;
 });
 
@@ -7,13 +7,9 @@ var desiredThumbnailWidth = 480;
 
 var thumbnail = _.chain(self.snippets)
   // Get thumbnails
-  .filter(function (snippet) {
-    return snippet.tags.indexOf('thumbnail') !== -1;
-  })
+  .filter(snippet => snippet.tags.indexOf('thumbnail') !== -1)
   // Sort by width (closest to `desiredThumbnailWidth`)
-  .sortBy(function (snippet) {
-    return Math.abs((snippet.media.width || 0) - desiredThumbnailWidth);
-  })
+  .sortBy(snippet => Math.abs((snippet.media.width || 0) - desiredThumbnailWidth))
   // Get first
   .first()
   .value();

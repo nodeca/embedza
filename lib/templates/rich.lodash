@@ -1,5 +1,5 @@
 <%
-var rich = _.find(self.snippets, function (snippet) {
+var rich = _.find(self.snippets, snippet => {
   return snippet.tags.indexOf('rich') !== -1 && snippet.tags.indexOf('html5') !== -1;
 });
 

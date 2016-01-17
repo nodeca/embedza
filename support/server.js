@@ -4,12 +4,12 @@
 /* eslint-disable no-console */
 
 
-var express = require('express');
-var path    = require('path');
-var Embedza = require('../');
+const express = require('express');
+const path    = require('path');
+const Embedza = require('../');
 
 
-var cache = {
+let cache = {
   data: {},
   get: function (key, callback) {
     callback(null, cache.data[key]);
@@ -20,9 +20,7 @@ var cache = {
   }
 };
 
-var embedza = new Embedza({
-  cache: cache
-});
+let embedza = new Embedza({ cache });
 
 
 express()
@@ -31,29 +29,29 @@ express()
   .set('view engine', 'jade')
   .set('views', path.join(__dirname, 'assets'))
   .get('/', function (req, res) {
-    var url = req.query.url;
+    let url = req.query.url;
 
     if (url) {
-      embedza.info(url, function (err, data) {
+      embedza.info(url, (err, data) => {
         if (err) {
-          res.render('index', { err: err.toString(), url: url });
+          res.render('index', { err: err.toString(), url });
           return;
         }
 
         if (!data) {
-          res.render('index', { url: url });
+          res.render('index', { url });
           return;
         }
 
-        embedza.render(data, 'block', function (err, block) {
+        embedza.render(data, 'block', (err, block) => {
           if (err) {
-            res.render('index', { err: err.toString(), url: url });
+            res.render('index', { err: err.toString(), url });
             return;
           }
 
-          embedza.render(data, 'inline', function (err, inline) {
+          embedza.render(data, 'inline', (err, inline) => {
             if (err) {
-              res.render('index', { err: err.toString(), url: url });
+              res.render('index', { err: err.toString(), url });
               return;
             }
 
@@ -61,7 +59,7 @@ express()
               json: JSON.stringify(data, null, 2),
               inline: inline ? inline.html : null,
               block: block ? block.html : null,
-              url: url
+              url
             });
           });
         });
@@ -70,11 +68,11 @@ express()
       return;
     }
 
-    res.render('index', { url: url });
+    res.render('index', { url });
   })
   .listen(3000, function () {
-    var host = this.address().address;
-    var port = this.address().port;
+    let host = this.address().address;
+    let port = this.address().port;
 
     console.log('Embedza listening at http://%s:%s', host, port);
   });

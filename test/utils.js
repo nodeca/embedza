@@ -1,9 +1,9 @@
 'use strict';
 
 
-var assert = require('assert');
-var _      = require('lodash');
-var utils  = require('../lib/utils');
+const assert = require('assert');
+const _      = require('lodash');
+const utils  = require('../lib/utils');
 
 
 describe('utils', function () {
@@ -55,7 +55,7 @@ describe('utils', function () {
   describe('.uniqueAsync()', function () {
 
     it('unique params debounce', function (done) {
-      var calls = 0;
+      let calls = 0;
 
       function fn(__, cb) {
         calls++;
@@ -64,7 +64,7 @@ describe('utils', function () {
         setTimeout(cb, 0);
       }
 
-      var uniqueAsync = utils.uniqueAsync(fn);
+      let uniqueAsync = utils.uniqueAsync(fn);
 
       uniqueAsync(1, _.noop);
       uniqueAsync(1, _.noop);
@@ -77,14 +77,14 @@ describe('utils', function () {
 
 
     it('all callbacks should be called', function (done) {
-      var calls = 0;
+      let calls = 0;
 
       function fn(__, cb) {
         // Next tick
         setTimeout(cb, 0);
       }
 
-      var uniqueAsync = utils.uniqueAsync(fn);
+      let uniqueAsync = utils.uniqueAsync(fn);
 
       function finish() {
         calls++;

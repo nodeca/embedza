@@ -1,14 +1,14 @@
 'use strict';
 
 
-var assert   = require('assert');
-var Embedza  = require('..');
+const assert   = require('assert');
+const Embedza  = require('..');
 
 
 describe('API', function () {
 
   it('.addFetcher()', function (done) {
-    var embedza = new Embedza();
+    let embedza = new Embedza();
 
     embedza.addFetcher({
       id: 'test-fetcher',
@@ -28,7 +28,7 @@ describe('API', function () {
 
 
   it('.addMixin()', function (done) {
-    var embedza = new Embedza();
+    let embedza = new Embedza();
 
     embedza.addMixin({
       id: 'test-mixin',
@@ -55,7 +55,7 @@ describe('API', function () {
 
 
   it('.addMixinAfter()', function (done) {
-    var embedza = new Embedza();
+    let embedza = new Embedza();
 
     embedza.addMixinAfter({
       id: 'test-mixin-after',
@@ -82,11 +82,11 @@ describe('API', function () {
 
 
   it('.rule()', function () {
-    var embedza = new Embedza();
+    let embedza = new Embedza();
 
     embedza.addDomain('test.com');
 
-    var rule = embedza.rule('test.com');
+    let rule = embedza.rule('test.com');
 
     assert.ok(rule.enabled);
     assert.strictEqual(rule.id, 'test.com');
@@ -94,7 +94,7 @@ describe('API', function () {
 
 
   it('.forEach() - disable domain', function (done) {
-    var embedza = new Embedza();
+    let embedza = new Embedza();
 
     embedza.forEach(function (domain) {
       if (domain.id === 'youtube.com') {
@@ -136,7 +136,7 @@ describe('API', function () {
   describe('.addDomain()', function () {
 
     it('.addDomain() with domain name', function (done) {
-      var embedza = new Embedza();
+      let embedza = new Embedza();
 
       // Mock `.request`
       embedza.request = function (url, opt, callback) {
@@ -172,7 +172,7 @@ describe('API', function () {
 
 
     it('.addDomain() with options', function (done) {
-      var embedza = new Embedza();
+      let embedza = new Embedza();
 
       // Mock `.request`
       embedza.request = function (url, opt, callback) {
