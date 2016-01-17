@@ -10,6 +10,13 @@
   ],
   "repository": "nodeca/embedza",
   "license": "MIT",
+  "files": [
+    "assets/",
+    "config/generic.yml",
+    "lib/",
+    "support/",
+    "index.js"
+  ],
   "dependencies": {
     "async": "^1.3.0",
     "cheerio": "^0.19.0",
