@@ -6,7 +6,6 @@ const fs       = require('fs');
 const yaml     = require('js-yaml');
 const path     = require('path');
 const fixtures = yaml.load(fs.readFileSync(path.join(__dirname, 'fixtures', 'patterns.yml')));
-const async    = require('async');
 const _        = require('lodash');
 const Embedza  = require('..');
 
