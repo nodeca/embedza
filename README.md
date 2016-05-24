@@ -66,7 +66,7 @@ Creates new `Embedza` instance with specified options:
   methods. Default stub does nothing.
 
 
-### .render(url, type, callback)
+### .render(url, type [, callback])
 
 Try to create HTML snippet of requested type by URL.
 
@@ -77,7 +77,10 @@ Try to create HTML snippet of requested type by URL.
     - `result.html` - html code
     - `result.type` - matched format type
 
-### .info(url, callback)
+If callback not specified, result returned as a `Promise`.
+
+
+### .info(url [, callback])
 
 Similar to `.render()`, but returns object with full url description.
 
@@ -87,6 +90,8 @@ Similar to `.render()`, but returns object with full url description.
   - `result.src` - source url
   - `result.meta` - title, description, site
   - `result.snippets` - snippets data: type, tags, href, media, html
+
+If callback not specified, result returned as a `Promise`.
 
 
 ### .forEach(fn(rule))

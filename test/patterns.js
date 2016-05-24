@@ -13,13 +13,14 @@ const Embedza  = require('..');
 describe('patterns', function () {
   let embedza = new Embedza();
 
+  /* eslint-disable max-nested-callbacks */
 
   fixtures.forEach(function (data) {
 
     it(data.url, function (done) {
 
       // Render inline template for url
-      embedza.render(data.url, 'inline', function (err, result) {
+      embedza.render(data.url, 'inline', (err, result) => {
         if (err) {
           done(err);
           return;
@@ -28,7 +29,7 @@ describe('patterns', function () {
         if (_.isArray(data.inline)) {
 
           // If check rules is array - check each pattern
-          data.inline.forEach(function (fixture) {
+          data.inline.forEach(fixture => {
             assert.ok(fixture.test(result.html), "Inline template don't match pattern. ('" + data.url + "')");
           });
         } else if (_.isRegExp(data.inline)) {
@@ -42,7 +43,7 @@ describe('patterns', function () {
         }
 
         // Render block template
-        embedza.render(data.url, 'block', function (err, result) {
+        embedza.render(data.url, 'block', (err, result) => {
           if (err) {
             done(err);
             return;
@@ -51,7 +52,7 @@ describe('patterns', function () {
           if (_.isArray(data.block)) {
 
             // If check rules is array - check each pattern
-            data.block.forEach(function (fixture) {
+            data.block.forEach(fixture => {
               assert.ok(fixture.test(result.html), "Block template don't match pattern. ('" + data.url + "')");
             });
           } else if (_.isRegExp(data.block)) {
