@@ -1,3 +1,10 @@
+1.2.0 / 2016-05-25
+------------------
+
+- Added `Promise` support.
+- Fix resolve resource URL-s without protocols (`//example.com`).
+
+
 1.1.0 / 2016-01-17
 ------------------
 
