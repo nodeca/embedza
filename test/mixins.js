@@ -11,7 +11,8 @@ describe('mixins', function () {
     let env = {
       data: {
         meta: [
-          { name: 'title', value: 'foo' },
+          { name: 'title', value: 'wordpress.com - foo' },
+          { name: 'html-title', value: 'foo' },
           { name: 'twitter:site', value: 'bar' }
         ],
         oembed: { description: 'baz' }
@@ -54,6 +55,24 @@ describe('mixins', function () {
   });
 
 
+  it('twitter-thumbnail skip type photo', function (done) {
+    let mixin = mixins.find(m => m.id === 'twitter-thumbnail');
+    let env = {
+      data: {
+        meta: [
+          { name: 'twitter:card', value: 'photo' }
+        ]
+      },
+      result: { snippets: [] }
+    };
+
+    mixin.fn(env, (err) => {
+      assert.strictEqual(env.result.snippets.length, 0);
+      done(err);
+    });
+  });
+
+
   it('twitter-player', function (done) {
     let mixin = mixins.find(m => m.id === 'twitter-player');
     let env = {
@@ -80,6 +99,8 @@ describe('mixins', function () {
         { name: 'og:video:src', value: '/foo' },
         { name: 'og:video:type', value: 'foo' },
         { name: 'og:video:src', value: '/bar' },
+        { name: 'og:video:type', value: 'bar' },
+        { name: 'og:video:src', value: '' },
         { name: 'og:video:type', value: 'bar' }
       ] },
       result: { snippets: [] }
@@ -197,7 +218,7 @@ describe('mixins', function () {
       wl: { oembed: { rich: [ 'allow', 'reader', 'player', 'html5' ] } },
       data: { oembed: {
         type: 'rich',
-        html: '<iframe src="/foo"></iframe>'
+        html: '<iframe src="/foo" width="100" height="200"></iframe>'
       } },
       result: { snippets: [] }
     };
@@ -207,9 +228,35 @@ describe('mixins', function () {
         {
           href: '/foo',
           tags: [ 'oembed', 'rich', 'reader', 'player', 'html5' ],
-          media: {},
+          media: { width: '100', height: '200' },
           type: 'text/html',
           html: ''
+        }
+      ]);
+      done(err);
+    });
+  });
+
+
+  it('oembed-rich inline', function (done) {
+    let mixin = mixins.find(m => m.id === 'oembed-rich');
+    let env = {
+      wl: { oembed: { rich: [ 'allow', 'reader', 'player', 'html5', 'inline' ] } },
+      data: { oembed: {
+        type: 'rich',
+        html: '<iframe src="/foo" width="100" height="200"></iframe>'
+      } },
+      result: { snippets: [] }
+    };
+
+    mixin.fn(env, (err) => {
+      assert.deepStrictEqual(env.result.snippets, [
+        {
+          href: null,
+          html: '<iframe src="/foo" width="100" height="200"></iframe>',
+          tags: [ 'oembed', 'rich', 'reader', 'player', 'html5' ],
+          media: {},
+          type: 'text/html'
         }
       ]);
       done(err);
@@ -221,14 +268,14 @@ describe('mixins', function () {
     let mixin = mixins.find(m => m.id === 'favicon');
     let env = {
       data: { links: { icon: [
-        { type: 'foo', href: 'bar' }
+        { type: 'foo', href: 'bar', sizes: '10x15' }
       ] } },
       result: { snippets: [] }
     };
 
     mixin.fn(env, (err) => {
       assert.deepStrictEqual(env.result.snippets, [
-        { type: 'foo', href: 'bar', tags: [ 'icon' ], media: {} }
+        { type: 'foo', href: 'bar', tags: [ 'icon' ], media: { width: 10, height: 15 } }
       ]);
       done(err);
     });

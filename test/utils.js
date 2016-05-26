@@ -98,5 +98,14 @@ describe('utils', function () {
       uniqueAsync('a', finish);
       uniqueAsync('a', finish);
     });
+
+
+    it('should throw on wrong function signature', function () {
+      try {
+        utils.uniqueAsync(function () {});
+      } catch (e) {
+        assert.strictEqual(e.message, "uniqueAsync: 'fn' should have two parameters");
+      }
+    });
   });
 });

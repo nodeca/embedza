@@ -17,7 +17,8 @@ describe('mixins after', function () {
         snippets: [
           { href: '/img/foo.png' },
           { href: 'img/bar.png' },
-          { href: '//example.com/baz.png' }
+          { href: '//example.com/baz.png' },
+          { href: '' }
         ]
       }
     };
@@ -102,6 +103,93 @@ describe('mixins after', function () {
   });
 
 
+  it('image-size connection error', function (done) {
+    let mixin = mixinsAfter.find(m => m.id === 'image-size');
+    let env = {
+      self: { __options__: { cache: new Cache() } },
+      result: {
+        snippets: [
+          { type: 'image', media: {}, href: 'badurlbadurlbadurlbadurl.png' }
+        ]
+      }
+    };
+
+    mixin.fn(env, err => {
+      assert.strictEqual(err.message, 'Invalid URI "badurlbadurlbadurlbadurl.png"');
+      done();
+    });
+  });
+
+
+  it('image-size cache', function (done) {
+    let mixin = mixinsAfter.find(m => m.id === 'image-size');
+    let env = {
+      self: {
+        __options__: {
+          cache: {
+            get: (k, cb) => {
+              cb(null, { ts: Date.now(), ttl: 1000, dimensions: { width: 1, height: 1 } });
+            }
+          }
+        }
+      },
+      result: {
+        snippets: [
+          { type: 'image', media: {}, href: 'badurlbadurlbadurlbadurl.png' }
+        ]
+      }
+    };
+
+    mixin.fn(env, err => {
+      assert.deepStrictEqual(env.result.snippets[0].media, { width: 1, height: 1 });
+      done(err);
+    });
+  });
+
+
+  it('image-size cache get error', function (done) {
+    let mixin = mixinsAfter.find(m => m.id === 'image-size');
+    let env = {
+      self: { __options__: { cache: { get: (k, cb) => { cb('err'); } } } },
+      result: {
+        snippets: [
+          { type: 'image', href: 'http://example.com/1.jpg' }
+        ]
+      }
+    };
+
+    mixin.fn(env, err => {
+      assert.strictEqual(err, 'err');
+      done();
+    });
+  });
+
+
+  it('image-size cache set error', function (done) {
+    // 1x1 transparent gif
+    let demoImage = new Buffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
+    let server = nock('http://example.com')
+      .get('/1.jpg')
+      .reply(200, demoImage);
+
+    let mixin = mixinsAfter.find(m => m.id === 'image-size');
+    let env = {
+      self: { __options__: { cache: { get: (k, cb) => { cb(); }, set: (k, v, cb) => { cb('err'); } } } },
+      result: {
+        snippets: [
+          { type: 'image', href: 'http://example.com/1.jpg' }
+        ]
+      }
+    };
+
+    mixin.fn(env, err => {
+      assert.strictEqual(err, 'err');
+      server.done();
+      done();
+    });
+  });
+
+
   it('image-size', function (done) {
     // 1x1 transparent gif
     let demoImage = new Buffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
@@ -117,7 +205,8 @@ describe('mixins after', function () {
       result: {
         snippets: [
           { type: 'image', media: {}, href: 'http://example.com/1.jpg' },
-          { type: 'image', media: {}, href: 'http://example.com/2.png' }
+          { type: 'image', href: 'http://example.com/2.png' },
+          { type: 'image', media: {}, href: 'http://example.com/2.zzz' }
         ]
       }
     };
@@ -141,6 +230,10 @@ describe('mixins after', function () {
       .head('/test/foo.bar')
       .reply(200, '', {
         'content-type': 'foo/bar'
+      })
+      .head('/test/bar.zzz')
+      .reply(200, '', {
+        'content-type': ''
       });
 
     let mixin = mixinsAfter.find(m => m.id === 'mime-detect');
@@ -149,6 +242,7 @@ describe('mixins after', function () {
       result: {
         snippets: [
           { media: {}, href: 'http://example.com/test/foo.bar' },
+          { media: {}, href: 'http://example.com/test/bar.zzz' },
           { media: {}, href: 'http://example.com/test/baz.mp4' }
         ]
       }
@@ -160,9 +254,51 @@ describe('mixins after', function () {
         return;
       }
 
+      assert.strictEqual(env.result.snippets.length, 2);
       assert.strictEqual(env.result.snippets[0].type, 'foo/bar');
       assert.strictEqual(env.result.snippets[1].type, 'video/mp4');
       server.done();
+      done();
+    });
+  });
+
+
+  it('mime-detect bad response', function (done) {
+    let server = nock('http://example.com')
+      .head('/test/foo.bar')
+      .reply(500, '');
+
+    let mixin = mixinsAfter.find(m => m.id === 'mime-detect');
+    let env = {
+      self: { request },
+      result: {
+        snippets: [
+          { media: {}, href: 'http://example.com/test/foo.bar' }
+        ]
+      }
+    };
+
+    mixin.fn(env, function (err) {
+      assert.strictEqual(err.message, 'Mime-detect mixin after handler: Bad response code: 500');
+      server.done();
+      done();
+    });
+  });
+
+
+  it('mime-detect connection error', function (done) {
+    let mixin = mixinsAfter.find(m => m.id === 'mime-detect');
+    let env = {
+      self: { request },
+      result: {
+        snippets: [
+          { media: {}, href: 'badurlbadurlbadurlbadurl' }
+        ]
+      }
+    };
+
+    mixin.fn(env, function (err) {
+      assert.strictEqual(err.message, 'Invalid URI "badurlbadurlbadurlbadurl"');
       done();
     });
   });

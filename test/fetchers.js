@@ -28,6 +28,20 @@ describe('fetchers', function () {
   });
 
 
+  it('meta connection error', function (done) {
+    let fetcher = fetchers.find(m => m.id === 'meta');
+    let env = {
+      src: 'badurlbadurlbadurlbadurl',
+      self: { request }
+    };
+
+    fetcher.fn(env, err => {
+      assert.strictEqual(err.message, 'Invalid URI "badurlbadurlbadurlbadurl"');
+      done();
+    });
+  });
+
+
   it('meta', function (done) {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
@@ -96,6 +110,20 @@ describe('fetchers', function () {
   });
 
 
+  it('oembed connection error', function (done) {
+    let fetcher = fetchers.find(m => m.id === 'oembed');
+    let env = {
+      self: { request },
+      data: { links: { alternate: [ { type: 'text/json+oembed', href: 'badurlbadurlbadurlbadurl' } ] } }
+    };
+
+    fetcher.fn(env, err => {
+      assert.strictEqual(err.message, 'Invalid URI "badurlbadurlbadurlbadurl"');
+      done();
+    });
+  });
+
+
   it('oembed JSON', function (done) {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
@@ -115,6 +143,55 @@ describe('fetchers', function () {
   });
 
 
+  it('oembed bad JSON', function (done) {
+    let server = nock('http://example.com')
+      .get('/test/foo.bar')
+      .reply(200, 'aaa', { 'content-type': 'application/json' });
+
+    let fetcher = fetchers.find(m => m.id === 'oembed');
+    let env = {
+      self: { request },
+      data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
+    };
+
+    fetcher.fn(env, err => {
+      assert.strictEqual(err.message, "Oembed fetcher: Can't parse oembed JSON response");
+      server.done();
+      done();
+    });
+  });
+
+
+  it('oembed bad content type', function (done) {
+    let server = nock('http://example.com')
+      .get('/test/foo.bar')
+      .reply(200, 'aaa', { 'content-type': 'plain/text' });
+
+    let fetcher = fetchers.find(m => m.id === 'oembed');
+    let env = {
+      self: { request },
+      data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
+    };
+
+    fetcher.fn(env, err => {
+      assert.strictEqual(err.message, 'Oembed fetcher: Unknown oembed response content-type: plain/text');
+      server.done();
+      done();
+    });
+  });
+
+
+  it('oembed no links', function (done) {
+    let fetcher = fetchers.find(m => m.id === 'oembed');
+    let env = {
+      self: { request },
+      data: { links: { alternate: [ { href: '/foo.bar' } ] } }
+    };
+
+    fetcher.fn(env, err => done(err));
+  });
+
+
   it('oembed XML', function (done) {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
@@ -128,7 +205,7 @@ describe('fetchers', function () {
     let fetcher = fetchers.find(m => m.id === 'oembed');
     let env = {
       self: { request },
-      data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
+      data: { links: { alternative: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
     fetcher.fn(env, err => {
