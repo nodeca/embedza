@@ -3,6 +3,7 @@ embedza
 
 [![Build Status](https://img.shields.io/travis/nodeca/embedza/master.svg?style=flat)](https://travis-ci.org/nodeca/embedza)
 [![NPM version](https://img.shields.io/npm/v/embedza.svg?style=flat)](https://www.npmjs.org/package/embedza)
+[![Coverage Status](https://coveralls.io/repos/github/nodeca/embedza/badge.svg?branch=master)](https://coveralls.io/github/nodeca/embedza?branch=master)
 
 > Create HTML snippets/embeds from URLs using info from oEmbed,
 > Open Graph, meta tags.
