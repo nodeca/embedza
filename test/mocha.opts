@@ -1,1 +1,1 @@
--R spec -t 60000
+-R spec -t 60000 --recursive

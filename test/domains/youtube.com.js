@@ -2,11 +2,21 @@
 
 
 const assert  = require('assert');
-const Embedza = require('..');
+const Embedza = require('../..');
 const nock    = require('nock');
 
 
-describe('youtube.com fetcher', function () {
+describe('youtube.com', function () {
+  it('real request', function () {
+    let embedza = new Embedza();
+
+    return embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw')
+      .then(res => {
+        assert.deepStrictEqual(res.meta, { title: 'Me at the zoo', site: 'YouTube', description: '' });
+      });
+  });
+
+
   it('404', function () {
     let embedza = new Embedza();
     let server = nock('http://www.youtube.com')

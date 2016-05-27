@@ -2,11 +2,21 @@
 
 
 const assert  = require('assert');
-const Embedza = require('..');
+const Embedza = require('../..');
 const nock    = require('nock');
 
 
 describe('vimeo.com', function () {
+  it('real request', function () {
+    let embedza = new Embedza();
+
+    return embedza.info('https://vimeo.com/channels/staffpicks/135373919')
+      .then(res => {
+        assert.strictEqual(res.meta.title, '20 Minutes of Kite Flying Time Collapsed: San Diego Study #6');
+      });
+  });
+
+
   it('404', function () {
     let embedza = new Embedza();
     let server = nock('https://vimeo.com')
