@@ -28,6 +28,26 @@ describe('fetchers', function () {
   });
 
 
+  it('meta empty body', function (done) {
+    let server = nock('http://example.com')
+      .get('/test/foo.bar')
+      .reply(200, '');
+
+    let fetcher = fetchers.find(m => m.id === 'meta');
+    let env = {
+      src: 'http://example.com/test/foo.bar',
+      self: { request },
+      data: {}
+    };
+
+    fetcher.fn(env, err => {
+      assert.strictEqual();
+      server.done(env.data, { meta: [], links: {} });
+      done(err);
+    });
+  });
+
+
   it('meta connection error', function (done) {
     let fetcher = fetchers.find(m => m.id === 'meta');
     let env = {
@@ -52,6 +72,7 @@ describe('fetchers', function () {
             <meta property="foo1" content="bar1">
             <meta name="foo2" value="bar2">
             <meta name="foo3" src="bar3">
+            <meta name="foo4">
             <link rel="baz1" type="baz1/type" title="baz1 title">
             <link rel="baz1" type="baz11/type" title="baz11 title">
             <link name="baz2" title="baz2 title">
@@ -106,6 +127,20 @@ describe('fetchers', function () {
       assert.strictEqual(err.message, 'Oembed fetcher: Bad response code: 504');
       server.done();
       done();
+    });
+  });
+
+
+  it('oembed no links', function (done) {
+    let fetcher = fetchers.find(m => m.id === 'oembed');
+    let env = {
+      self: { request },
+      data: { links: {} }
+    };
+
+    fetcher.fn(env, err => {
+      assert(!env.data.oembed);
+      done(err);
     });
   });
 
@@ -210,6 +245,25 @@ describe('fetchers', function () {
 
     fetcher.fn(env, err => {
       assert.deepStrictEqual(env.data.oembed, { foo: 'bar' });
+      server.done();
+      done(err);
+    });
+  });
+
+
+  it('oembed XML empty body', function (done) {
+    let server = nock('http://example.com')
+      .get('/test/foo.bar')
+      .reply(200, '', { 'content-type': 'text/xml' });
+
+    let fetcher = fetchers.find(m => m.id === 'oembed');
+    let env = {
+      self: { request },
+      data: { links: { alternative: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
+    };
+
+    fetcher.fn(env, err => {
+      assert.deepStrictEqual(env.data.oembed, {});
       server.done();
       done(err);
     });
