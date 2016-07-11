@@ -130,7 +130,7 @@ describe('mixins after', function () {
 
     mixin.fn(env, err => {
       assert.deepStrictEqual(env.result.snippets[0].media, { width: 10, height: 20, duration: 30, foo: '40' });
-      assert.deepStrictEqual(env.result.snippets[1].media, { width: 11 });
+      assert.deepStrictEqual(env.result.snippets[1].media, {});
       done(err);
     });
   });
@@ -161,7 +161,7 @@ describe('mixins after', function () {
         __options__: {
           cache: {
             get: (k, cb) => {
-              cb(null, { ts: Date.now(), ttl: 1000, dimensions: { width: 1, height: 1 } });
+              cb(null, { ts: Date.now(), ttl: 1000, dimensions: { width: 1, height: 1, wUnits: 'px', hUnits: 'px' } });
             }
           }
         }
@@ -244,7 +244,11 @@ describe('mixins after', function () {
       .get('/1.jpg')
       .reply(200, demoImage)
       .get('/2.png')
-      .reply(200, demoImage);
+      .reply(200, demoImage)
+      .get('/3.svg')
+      .reply(200, '<svg width="5in" height="4px"></svg>')
+      .get('/4.svg')
+      .reply(200, '<svg width="1px" viewbox="0 0 100 50">');
 
     let mixin = mixinsAfter.find(m => m.id === 'image-size');
     let env = {
@@ -255,7 +259,9 @@ describe('mixins after', function () {
           { type: 'image', href: 'http://example.com/2.png' },
           { type: 'image', media: {}, href: 'http://example.com/2.zzz' },
           { type: 'test', media: {}, href: 'http://example.com/3.zzz' },
-          { type: 'image', media: { width: 10, height: 20 }, href: 'http://example.com/4.zzz' }
+          { type: 'image', media: { width: 10, height: 20 }, href: 'http://example.com/4.zzz' },
+          { type: 'image', href: 'http://example.com/3.svg' },
+          { type: 'image', href: 'http://example.com/4.svg' }
         ]
       }
     };
@@ -271,6 +277,8 @@ describe('mixins after', function () {
       assert.deepStrictEqual(env.result.snippets[2].media, {});
       assert.deepStrictEqual(env.result.snippets[3].media, {});
       assert.deepStrictEqual(env.result.snippets[4].media, { width: 10, height: 20 });
+      assert.ok(!env.result.snippets[5].media);
+      assert.deepStrictEqual(env.result.snippets[6].media, { width: 1, height: 0.5 });
 
       // Check from
       server.done();
