@@ -1,3 +1,11 @@
+1.2.3 / 2016-07-11
+------------------
+
+- Fixed nasty typos, causing double callbacks call errors in some cases.
+- Added SVG support and fractional values for media dimentions.
+- Improved media dimentions validation for bad data.
+
+
 1.2.2 / 2016-05-30
 ------------------
 
