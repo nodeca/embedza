@@ -1,3 +1,9 @@
+1.2.4 / 2016-11-02
+------------------
+
+- Switch from `http` to `https` for initial config download.
+
+
 1.2.3 / 2016-07-11
 ------------------
 

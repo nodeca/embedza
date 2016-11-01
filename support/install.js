@@ -4,12 +4,12 @@
 /* eslint-disable no-console */
 
 
-const http    = require('http');
+const https   = require('https');
 const fs      = require('fs');
 const path    = require('path');
 
 
-const URL = 'http://iframely.com/qa/whitelist.json';
+const URL = 'https://iframely.com/qa/whitelist.json';
 const SAVE_PATH = path.join(__dirname, '..', 'config', 'domains_conf.json');
 
 
@@ -27,7 +27,7 @@ if (stat && stat.size > 0) {
 console.log('Downloading: ' + URL + ' ...');
 
 // Download
-http.get(URL, function (res) {
+https.get(URL, function (res) {
   if (res.statusCode !== 200) {
     console.error('Bad response code: ' + res.statusCode);
     process.exit(1);
