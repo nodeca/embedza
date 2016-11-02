@@ -8,6 +8,13 @@ const nock    = require('nock');
 
 describe('vimeo.com', function () {
   it('real request', function () {
+    // skip this test while run on TRAVIS-CI,
+    // because vimeo returns 403 error
+    if (process.env.TRAVIS) {
+      this.skip();
+      return null;
+    }
+
     let embedza = new Embedza();
 
     return embedza.info('https://vimeo.com/channels/staffpicks/135373919')
