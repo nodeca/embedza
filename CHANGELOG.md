@@ -2,6 +2,7 @@
 ------------------
 
 - Switch from `http` to `https` for initial config download.
+- Deps bump.
 
 
 1.2.3 / 2016-07-11
