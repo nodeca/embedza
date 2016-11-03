@@ -1,87 +1,91 @@
-# Internal env lifecycle
+# Embedza data flow
 
-## Info
+## `env` data structure
 
-### `env`
+To resolve link, we take initial `env` object and pipe it through multiple processing stages. Here is initial `env` structure:
 
-- src (String) - resource url
-- wl (Object) - whitelist domain config. Contains hashes for each provider
-  type (`twitter`, `og`, `oembed`, `html-meta`) with hashes for content
-  types (`player`, `video`, `photo`, `rich`). Each content type may contain tags:
-  - allow
-  - deny
-  - responsive
-  - html5
-  - autoplay
-- config (Object) - additional domain config: autoplay parameter name, API key
-- data (Object) - fetchers data sandbox
-- result (Object) - output data
-  - `domain` - domain plugin id ('youtube.com', 'vimeo.com', ...)
-  - `src` - source url
-  - `meta` - title, description, site
-  - `snippets` - snippets data: type, tags, href, media, html
-- self (Embedza)
+- __src__ - resource url
+- __wl__ - whitelisted domain config. Contains info about supported sites and
+  additionsl instructions about available features (if description in page
+  html/omebed has mistakes or not enougth). This info is taken from iframely
+  site on package install, to reduce local config data and simplify maintenance.
+- __config__ - additional config info (data from iframely is not enougth
+  for us). On embedza init you can pass API keys and other options here.
+- __data__ - fetchers data sandbox
+- __result__ - output data
+  - __domain__ - domain (provider) rule id ('youtube.com', 'vimeo.com', ...)
+  - __src__ - source url
+  - __meta__ - title, description, site
+  - __snippets__ - snippets data: type, tags, href, media, html
+- __self__ (Embedza)
 
-### Data flow stages
+## Procesing stages
 
-- **initialize**
+`env` pass throuhg sereval stages, each stage has multiple plugins. This
+division is done do simplify priorities control. May be, this could be done
+better, but current implementation is simple and enougth for our needs.
+
+- __initialize__ - create `env`
   - parse url
   - check url match rules
   - fill domain config
   - lookup and fill whitelist config
-- **fetchers** stage - fetch re
+- __fetchers__ stage - fetch remote page & oembed info
   - fetch page data
   - parse tags
   - fetch oembed data (if exists)
   - fill `env.data` structure
-- **mixins** stage
+- __mixins__ stage - no remote fetches, process page metadata
   - fill `env.result.meta` and `env.result.snippets`
-- **mixins_after** stage
+- __mixins_after__ stage - compact output (if duplicated in different tags)
+  and fetch remote image sizes.
   - resolve snippet's href
   - detect content-type
   - merge snippets data by href
   - load images size
 
-### Fetchers
+Details about each stage are described below.
 
-- **meta** - Meta-data fetcher. Parse `head` tag for: `title`, `link` and
+### fetchers
+
+- __meta__ - Meta-data fetcher. Parse `head` tag for: `title`, `link` and
   `meta` tags. Fill `env.data.meta` and `env.data.links`.
-- **oembed** - Oembed fetcher. Look for `env.data.links.alternate` and try
+- __oembed__ - Oembed fetcher. Look for `env.data.links.alternate` and try
   to request `json` or `xml` data in oembed format. Fill `env.data.oembed`.
 
-### Mixins
+### mixins
 
-- **meta** - Fill `env.result.meta` with `title`, `site` and `description`.
-- **twitter-thumbnail** - Extract data from `<twitter:image>` tag.
-- **twitter-player** - Extract data from `<twitter:player>` tag.
-- **og-player** - Extract data from `<og:video>` tag.
-- **og-thumbnail** - Extract data from `<og:image>` tag.
-- **oembed-player** - Extract data from `oembed.html` tag.
-- **oembed-photo** - Extract data from `oembed.url` tag.
-- **oembed-icon** - Extract data from `oembed.icon_url` tag.
-- **oembed-thumbnail** - Extract data from `oembed.thumbnail_url` tag.
-- **oembed-rich** - Extract data from oembed rich.
-- **favicon** - Extract favicons.
-- **logo** - Extract logo from meta.
+- __meta__ - Fill `env.result.meta` with `title`, `site` and `description`.
+- __twitter-thumbnail__ - Extract data from `<twitter:image>` tag.
+- __twitter-player__ - Extract data from `<twitter:player>` tag.
+- __og-player__ - Extract data from `<og:video>` tag.
+- __og-thumbnail__ - Extract data from `<og:image>` tag.
+- __oembed-player__ - Extract data from `oembed.html` tag.
+- __oembed-photo__ - Extract data from `oembed.url` tag.
+- __oembed-icon__ - Extract data from `oembed.icon_url` tag.
+- __oembed-thumbnail__ - Extract data from `oembed.thumbnail_url` tag.
+- __oembed-rich__ - Extract data from oembed rich.
+- __favicon__ - Extract favicons.
+- __logo__ - Extract logo from meta.
 
-### Mixins after
+### mixins_after
 
-- **resolve-href** - Resolve snippet's href. '/img/icon.png' -> 'http://example.com/img/icon.png',
-  '//example.com/img/icon.png' -> 'http(s)://example.com/img/icon.png'
-- **mime-detect** - Detect content-type of snippet (if not defined yet).
-- **ssl-force** - Add ssl tag for https snippets.
-- **merge** - Merge snippets data by href.
-- **image-size** - Load images size.
-- **set-autoplay** - Set autoplay parameter to `snippet.media`.
-- **convert-str-int** - Convert 'width', 'height' and 'duration' to float and remove bad values.
+- __resolve-href__ - Resolve snippet's href: `/img/icon.png` -> `http://example.com/img/icon.png`,
+  `//example.com/img/icon.png` -> `http(s)://example.com/img/icon.png`
+- __mime-detect__ - Detect content-type of snippet (if not defined yet).
+- __ssl-force__ - Add ssl tag for https snippets.
+- __merge__ - Merge snippets data by href.
+- __image-size__ - Load images size.
+- __set-autoplay__ - Set autoplay parameter to `snippet.media`.
+- __convert-str-int__ - Convert 'width', 'height' and 'duration' to float and remove bad values.
 
 ## Example
 
-For url: `https://www.youtube.com/watch?v=JrZSfMiVC88`.
+For https://www.youtube.com/watch?v=JrZSfMiVC88.
 
-### Initial
+Initial:
 
-```javascript
+```js
 {
   "src": "https://www.youtube.com/watch?v=JrZSfMiVC88",
   "wl": {
@@ -104,9 +108,9 @@ For url: `https://www.youtube.com/watch?v=JrZSfMiVC88`.
 }
 ```
 
-### After fetchers
+After `fetchers`:
 
-```javascript
+```js
 {
   // ...
   "data": {
@@ -131,9 +135,9 @@ For url: `https://www.youtube.com/watch?v=JrZSfMiVC88`.
 }
 ```
 
-### After mixins
+After `mixins`:
 
-```javascript
+```js
 {
   // ...
   "result": {
@@ -173,9 +177,9 @@ For url: `https://www.youtube.com/watch?v=JrZSfMiVC88`.
 }
 ```
 
-### After mixins_after
+After `mixins_after`:
 
-```javascript
+```js
 {
   // ...
   "result": {
@@ -189,12 +193,12 @@ For url: `https://www.youtube.com/watch?v=JrZSfMiVC88`.
           "oembed",
           "responsive",
           "html5",
-          "ssl" // added by `ssl-force` mixin after
+          "ssl" // added by `ssl-force` in `mixin_after`
         ],
         "media": {
           "width": 459,
           "height": 344,
-          "autoplay": "autoplay=1" // added by `set-autoplay` mixin after
+          "autoplay": "autoplay=1" // added by `set-autoplay` in `mixin_after`
         }
       },
       {
@@ -203,7 +207,7 @@ For url: `https://www.youtube.com/watch?v=JrZSfMiVC88`.
         "tags": [
           "thumbnail",
           "oembed",
-          "ssl" // added by `ssl-force` mixin after
+          "ssl" // added by `ssl-force` in `mixin_after`
         ],
         "media": {
           "width": 480,
