@@ -5,12 +5,12 @@
 To resolve link, we take initial `env` object and pipe it through multiple processing stages. Here is initial `env` structure:
 
 - __src__ - resource url
-- __wl__ - whitelisted domain config. Contains info about supported sites and
-  additionsl instructions about available features (if description in page
-  html/omebed has mistakes or not enougth). This info is taken from iframely
-  site on package install, to reduce local config data and simplify maintenance.
-- __config__ - additional config info (data from iframely is not enougth
-  for us). On embedza init you can pass API keys and other options here.
+- __config__ - config info for API keys, whitelist and other options
+  - __wl__ - Contains info about supported sites and
+    additionsl instructions about available features (if description in page
+    html/omebed has mistakes or not enougth). This info is taken from iframely
+    site on package install, to reduce local config data and simplify maintenance.
+  - __autoplay__ - part of url query string to start specific player automatically
 - __data__ - fetchers data sandbox
 - __result__ - output data
   - __domain__ - domain (provider) rule id ('youtube.com', 'vimeo.com', ...)
@@ -219,3 +219,33 @@ After `mixins_after`:
   // ...
 }
 ```
+
+# Configs
+
+Config info for each domain. Used for API keys, whitelist and other options.
+
+Whitelist info is taken from iframely site on package install to `config/domains_conf.json`.
+Used to skip redundant `mixins`.
+
+Additional config is taken from `config/generic.yml` or from `lib/domains/*`.
+
+```javascript
+{
+  "oembed": { // source, could be: `og`, `twitter`, `oembed` and `html-meta`
+    "video": [ // source filter, could be: `player`, `video`, `photo`, `rich`
+      "deny", // if source is denided
+      "ssl", // "http:" -> "https:"
+      "html5",
+      "rich"
+    ]
+  }
+}
+```
+
+
+- __allow__
+- __deny__
+- __responsive__
+- __ssl__
+- __html5__
+- __autoplay__
