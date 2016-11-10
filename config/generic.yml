@@ -1,7 +1,8 @@
 # This list contains domains that use default rules.
 # Custom domains from 'lib/domains' included automatically.
 
--
-  id: rutube.ru
-  config:
-    autoplay: autoStart=true
+#-
+#  id: example.com
+#  config:
+#    og:
+#      video: [ ssl ]

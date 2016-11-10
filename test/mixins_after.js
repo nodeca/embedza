@@ -82,36 +82,18 @@ describe('mixins after', function () {
   it('set-autoplay', function (done) {
     let mixin = mixinsAfter.find(m => m.id === 'set-autoplay');
     let env = {
-      config: { autoplay: true },
+      config: {},
       result: {
         snippets: [
-          { href: 'http://example.com/1', tags: [ 'player' ], media: {}, type: 'text/html' },
+          { href: 'http://example.com/1', tags: [ 'player', 'autoplay' ], media: {}, type: 'text/html' },
           { href: 'http://example.com/1', tags: [ 'player' ], media: {}, type: 'non/html' }
         ]
       }
     };
 
     mixin.fn(env, err => {
-      assert.strictEqual(env.result.snippets[0].media.autoplay, true);
+      assert.strictEqual(env.result.snippets[0].media.autoplay, 'autoplay=1');
       assert.deepStrictEqual(env.result.snippets[1].media, {});
-      done(err);
-    });
-  });
-
-
-  it('set-autoplay no config', function (done) {
-    let mixin = mixinsAfter.find(m => m.id === 'set-autoplay');
-    let env = {
-      config: {},
-      result: {
-        snippets: [
-          { href: 'http://example.com/1', tags: [ 'player' ], media: {}, type: 'text/html' }
-        ]
-      }
-    };
-
-    mixin.fn(env, err => {
-      assert.deepStrictEqual(env.result.snippets[0].media, {});
       done(err);
     });
   });

@@ -12,6 +12,9 @@ describe('rutube.ru', function () {
     return embedza.info('https://rutube.ru/video/8623c112d77065f9b8167da7b7d8214f/')
       .then(res => {
         assert.strictEqual(res.meta.title, 'Физрук: Жил-был пёс');
+        res.snippets.forEach(s => {
+          if (s.tags.indexOf('player') !== -1) assert.strictEqual(s.media.autoplay, 'autoStart=true');
+        });
       });
   });
 });
