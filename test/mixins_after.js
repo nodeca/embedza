@@ -103,7 +103,8 @@ describe('mixins after', function () {
       result: {
         snippets: [
           { media: { width: '10', height: '20', duration: '30', foo: '40' } },
-          { media: { width: 11 } }
+          { media: { width: 11 } },
+          { media: { width: 'foo', height: 12 } }
         ]
       }
     };
@@ -111,6 +112,7 @@ describe('mixins after', function () {
     return mixin.fn(env).then(() => {
       assert.deepStrictEqual(env.result.snippets[0].media, { width: 10, height: 20, duration: 30, foo: '40' });
       assert.deepStrictEqual(env.result.snippets[1].media, {});
+      assert.deepStrictEqual(env.result.snippets[2].media, {});
     });
   });
 
