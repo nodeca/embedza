@@ -219,6 +219,8 @@ describe('mixins after', function () {
   it('image-size', function () {
     // 1x1 transparent gif
     let demoImage = new Buffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
+    let badImage  = new Buffer('0000', 'base64');
+
     let server = nock('http://example.com')
       .get('/1.jpg')
       .reply(200, demoImage)
@@ -227,7 +229,9 @@ describe('mixins after', function () {
       .get('/3.svg')
       .reply(200, '<svg width="5in" height="4px"></svg>')
       .get('/4.svg')
-      .reply(200, '<svg width="1px" viewbox="0 0 100 50">');
+      .reply(200, '<svg width="1px" viewbox="0 0 100 50">')
+      .get('/5.jpg')
+      .reply(200, badImage);
 
     let mixin = mixinsAfter.find(m => m.id === 'image-size');
     let env = {
@@ -240,7 +244,8 @@ describe('mixins after', function () {
           { type: 'test', media: {}, href: 'http://example.com/3.zzz' },
           { type: 'image', media: { width: 10, height: 20 }, href: 'http://example.com/4.zzz' },
           { type: 'image', href: 'http://example.com/3.svg' },
-          { type: 'image', href: 'http://example.com/4.svg' }
+          { type: 'image', href: 'http://example.com/4.svg' },
+          { type: 'image', href: 'http://example.com/5.jpg' }
         ]
       }
     };
@@ -255,6 +260,7 @@ describe('mixins after', function () {
       assert.deepStrictEqual(env.result.snippets[4].media, { width: 10, height: 20 });
       assert.ok(!env.result.snippets[5].media);
       assert.deepStrictEqual(env.result.snippets[6].media, { width: 1, height: 0.5 });
+      assert.ok(!env.result.snippets[7].media);
     });
   });
 
