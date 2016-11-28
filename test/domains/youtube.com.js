@@ -35,10 +35,7 @@ describe('youtube.com', function () {
   it('connection error', function () {
     let embedza = new Embedza();
 
-    embedza.request = (_, opt, cb) => {
-      if (cb) cb('err');
-      else opt('err');
-    };
+    embedza.request = () => Promise.reject('err');
 
     return embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs')
       .catch(err => {

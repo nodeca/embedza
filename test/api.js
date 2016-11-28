@@ -8,77 +8,60 @@ const nock     = require('nock');
 
 describe('API', function () {
 
-  it('.addFetcher()', function (done) {
+  it('.addFetcher()', function () {
     let embedza = new Embedza();
 
     embedza.addFetcher({
       id: 'test-fetcher',
       priority: -999,
-      fn: function (env, callback) {
-        callback('test fetcher error');
-      }
+      fn: () => Promise.reject('test fetcher error')
     });
 
     embedza.addDomain('example.org');
 
-    embedza.render('http://example.org/12345', 'block', function (err) {
-      assert.strictEqual(err, 'test fetcher error');
-      done();
-    });
+    return embedza.render('http://example.org/12345', 'block')
+      .then(() => { throw new Error('error should be thrown here'); })
+      .catch(err => assert.strictEqual(err, 'test fetcher error'));
   });
 
 
-  it('.addMixin()', function (done) {
+  it('.addMixin()', function () {
     let embedza = new Embedza();
 
     embedza.addMixin({
       id: 'test-mixin',
-      fn: function (env, callback) {
-        callback('test mixin error');
-      }
+      fn: () => Promise.reject('test mixin error')
     });
 
     // Mock `.request`
-    embedza.request = function (url, opt, callback) {
-      if (!callback) {
-        callback = opt;
-        opt = null;
-      }
-
-      callback(null, { statusCode: 200 }, '{}');
-    };
-
-    embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block', function (err) {
-      assert.strictEqual(err, 'test mixin error');
-      done();
+    embedza.request = () => Promise.resolve({
+      statusCode: 200,
+      body: '{}'
     });
+
+    return embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block')
+      .then(() => { throw new Error('error should be thrown here'); })
+      .catch(err => assert.strictEqual(err, 'test mixin error'));
   });
 
 
-  it('.addMixinAfter()', function (done) {
+  it('.addMixinAfter()', function () {
     let embedza = new Embedza();
 
     embedza.addMixinAfter({
       id: 'test-mixin-after',
-      fn: function (env, callback) {
-        callback('test mixin after error');
-      }
+      fn: () => Promise.reject('test mixin after error')
     });
 
     // Mock `.request`
-    embedza.request = function (url, opt, callback) {
-      if (!callback) {
-        callback = opt;
-        opt = null;
-      }
-
-      callback(null, { statusCode: 200 }, '{}');
-    };
-
-    embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block', function (err) {
-      assert.strictEqual(err, 'test mixin after error');
-      done();
+    embedza.request = () => Promise.resolve({
+      statusCode: 200,
+      body: '{}'
     });
+
+    return embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block')
+      .then(() => { throw new Error('error should be thrown here'); })
+      .catch(err => assert.strictEqual(err, 'test mixin after error'));
   });
 
 
@@ -94,7 +77,7 @@ describe('API', function () {
   });
 
 
-  it('.forEach() - disable domain', function (done) {
+  it('.forEach() - disable domain', function () {
     let embedza = new Embedza();
 
     embedza.forEach(function (domain) {
@@ -104,71 +87,37 @@ describe('API', function () {
     });
 
     // Mock `.request`
-    embedza.request = function (url, opt, callback) {
-      if (!callback) {
-        callback = opt;
-        opt = null;
-      }
-
-      callback(null, { statusCode: 200 }, '{}');
-    };
-
-    embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw', function (err, res) {
-      if (err) {
-        done(err);
-        return;
-      }
-
-      assert.equal(res, null);
-
-      embedza.info('https://vimeo.com/channels/staffpicks/135373919', function (err, res) {
-        if (err) {
-          done(err);
-          return;
-        }
-
-        assert.strictEqual(res.src, 'https://vimeo.com/channels/staffpicks/135373919');
-        done();
-      });
+    embedza.request = () => Promise.resolve({
+      statusCode: 200,
+      body: '{}'
     });
+
+    return embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw')
+      .then(res => assert.equal(res, null))
+      .then(() => embedza.info('https://vimeo.com/channels/staffpicks/135373919'))
+      .then(res => assert.strictEqual(res.src, 'https://vimeo.com/channels/staffpicks/135373919'));
   });
 
 
   describe('.addDomain()', function () {
 
-    it('.addDomain() with domain name', function (done) {
+    it('.addDomain() with domain name', function () {
       let embedza = new Embedza();
 
       // Mock `.request`
-      embedza.request = function (url, opt, callback) {
-        if (!callback) {
-          callback = opt;
-          opt = null;
-        }
-
-        callback(null, { statusCode: 200 }, '');
-      };
-
-      embedza.info('https://example.com/', function (err, res) {
-        if (err) {
-          done(err);
-          return;
-        }
-
-        assert.equal(res, null);
-
-        embedza.addDomain('example.com');
-
-        embedza.info('https://example.com/', function (err, res) {
-          if (err) {
-            done(err);
-            return;
-          }
-
-          assert.strictEqual(res.src, 'https://example.com/');
-          done();
-        });
+      embedza.request = () => Promise.resolve({
+        statusCode: 200,
+        body: ''
       });
+
+      return embedza.info('https://example.com/')
+        .then(res => assert.equal(res, null))
+        .then(() => {
+          embedza.addDomain('example.com');
+
+          return embedza.info('https://example.com/');
+        })
+        .then(res => assert.strictEqual(res.src, 'https://example.com/'));
     });
 
 
@@ -178,13 +127,11 @@ describe('API', function () {
       embedza.addDomain('example.com');
 
       return embedza.info('https://example.com/asd')
-        .then(res => {
-          assert.equal(res, null);
-        });
+        .then(res => assert.equal(res, null));
     });
 
 
-    it('.addDomain() with options', function (done) {
+    it('.addDomain() with options', function () {
       let embedza = new Embedza();
       let server = nock('https://example.com')
         .get('/asd')
@@ -201,40 +148,35 @@ describe('API', function () {
         match: /^https?:\/\/example.com\/.*/,
         fetchers: [
           'meta',
-          function (env, cb) {
+          env => {
             env.result.fetchersExtraTest1 = true;
-            cb();
+            return Promise.resolve();
           },
           {
-            fn: function (env, cb) {
+            fn: env => {
               env.result.fetchersExtraTest2 = true;
-              cb();
+              return Promise.resolve();
             },
             priority: 0
           }
         ],
         mixins: [
           'twitter-thumbnail',
-          function (env, cb) {
+          env => {
             env.result.mixinsExtraTest = true;
-            cb();
+            return Promise.resolve();
           }
         ],
         mixinsAfter: [
           'ssl-force',
-          function (env, cb) {
+          env => {
             env.result.mixinsAfterExtraTest = true;
-            cb();
+            return Promise.resolve();
           }
         ]
       });
 
-      embedza.info('https://example.com/asd', function (err, res) {
-        if (err) {
-          done(err);
-          return;
-        }
-
+      return embedza.info('https://example.com/asd').then(res => {
         assert.deepEqual(res.snippets, [ {
           type: 'image',
           href: 'https://example.com/123.jpg',
@@ -248,7 +190,6 @@ describe('API', function () {
         assert.ok(res.mixinsAfterExtraTest);
 
         server.done();
-        done();
       });
     });
   });
@@ -257,27 +198,28 @@ describe('API', function () {
   describe('.info()', function () {
     it('from cache', function () {
       let embedza = new Embedza({
-        cache: { get: (__, cb) => { cb(null, { info: { foo: 'bar' } }); } },
+        cache: {
+          get: () => Promise.resolve({ info: { foo: 'bar' } })
+        },
         enabledProviders: [ 'test.com' ]
       });
 
       return embedza.info('http://test.com/bla')
-        .then(res => {
-          assert.deepStrictEqual(res, { foo: 'bar' });
-        });
+        .then(res => assert.deepStrictEqual(res, { foo: 'bar' }));
     });
 
 
     it('from cache with error', function () {
       let embedza = new Embedza({
-        cache: { get: (__, cb) => { cb('err'); } },
+        cache: {
+          get: () => Promise.reject('err')
+        },
         enabledProviders: [ 'test.com' ]
       });
 
       return embedza.info('http://test.com/bla')
-        .catch(err => {
-          assert.strictEqual(err, 'err');
-        });
+        .then(() => { throw new Error('error should be thrown here'); })
+        .catch(err => assert.strictEqual(err, 'err'));
     });
 
 
@@ -285,9 +227,7 @@ describe('API', function () {
       let embedza = new Embedza();
 
       return embedza.info('badurl')
-        .then(res => {
-          assert.ok(!res);
-        });
+        .then(res => assert.ok(!res));
     });
   });
 
@@ -342,6 +282,7 @@ describe('API', function () {
       let embedza = new Embedza({ enabledProviders: [ 'badurl.badurl' ] });
 
       return embedza.render('http://badurl.badurl/asd', 'inline')
+        .then(() => { throw new Error('error should be thrown here'); })
         .catch(err => {
           assert.strictEqual(err.message, 'getaddrinfo ENOTFOUND badurl.badurl badurl.badurl:80');
         });

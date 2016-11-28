@@ -6,7 +6,8 @@ const mixins  = require('../lib/mixins');
 
 
 describe('mixins', function () {
-  it('meta', function (done) {
+
+  it('meta', function () {
     let mixin = mixins.find(m => m.id === 'meta');
     let env = {
       data: {
@@ -20,15 +21,14 @@ describe('mixins', function () {
       result: { meta: {} }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.meta, { title: 'foo', site: 'bar', description: 'baz' });
-
-      done(err);
-    });
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.meta,
+      { title: 'foo', site: 'bar', description: 'baz' }
+    ));
   });
 
 
-  it('twitter-thumbnail', function (done) {
+  it('twitter-thumbnail', function () {
     let mixin = mixins.find(m => m.id === 'twitter-thumbnail');
     let env = {
       data: {
@@ -43,19 +43,18 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { type: 'image', href: '/b', tags: [ 'thumbnail', 'twitter' ], media: {} },
         { type: 'image', href: '/c', tags: [ 'thumbnail', 'twitter' ], media: {} },
         { type: 'image', href: '/a', tags: [ 'thumbnail', 'twitter' ], media: { width: 10 } }
-      ]);
-
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('twitter-thumbnail skip type photo', function (done) {
+  it('twitter-thumbnail skip type photo', function () {
     let mixin = mixins.find(m => m.id === 'twitter-thumbnail');
     let env = {
       data: {
@@ -66,14 +65,12 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.strictEqual(env.result.snippets.length, 0);
-      done(err);
-    });
+    return mixin.fn(env)
+      .then(() => assert.strictEqual(env.result.snippets.length, 0));
   });
 
 
-  it('twitter-player html5', function (done) {
+  it('twitter-player html5', function () {
     let mixin = mixins.find(m => m.id === 'twitter-player');
     let env = {
       wl: { twitter: { player: [ 'allow', 'html5' ] } },
@@ -81,17 +78,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { href: '/foo', tags: [ 'player', 'twitter', 'responsive', 'html5' ], type: 'text/html', media: {} }
-      ]);
-
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('twitter-player', function (done) {
+  it('twitter-player', function () {
     let mixin = mixins.find(m => m.id === 'twitter-player');
     let env = {
       wl: { twitter: { player: 'allow' } },
@@ -99,17 +95,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { href: '/foo', tags: [ 'player', 'twitter', 'responsive' ], media: {} }
-      ]);
-
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('og-player', function (done) {
+  it('og-player', function () {
     let mixin = mixins.find(m => m.id === 'og-player');
     let env = {
       wl: { og: { video: 'allow' } },
@@ -124,17 +119,17 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { href: '/foo', tags: [ 'player', 'og', 'responsive' ], media: {}, type: 'foo' },
         { href: '/bar', tags: [ 'player', 'og', 'responsive' ], media: {}, type: 'bar' }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('og-thumbnail', function (done) {
+  it('og-thumbnail', function () {
     let mixin = mixins.find(m => m.id === 'og-thumbnail');
     let env = {
       data: { meta: [
@@ -144,17 +139,17 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { href: '/foo', tags: [ 'thumbnail', 'og' ], media: {}, type: 'image' },
         { href: '/bar', tags: [ 'thumbnail', 'og' ], media: {}, type: 'image' }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-player html5', function (done) {
+  it('oembed-player html5', function () {
     let mixin = mixins.find(m => m.id === 'oembed-player');
     let env = {
       wl: { oembed: { video: 'allow' } },
@@ -165,16 +160,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { href: '/foo', tags: [ 'player', 'oembed', 'responsive', 'html5' ], media: {}, type: 'text/html' }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-player html', function (done) {
+  it('oembed-player html', function () {
     let mixin = mixins.find(m => m.id === 'oembed-player');
     let env = {
       wl: { oembed: { video: 'allow' } },
@@ -185,16 +180,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { href: '/foo', tags: [ 'player', 'oembed', 'responsive', 'html5' ], media: {}, type: 'text/html' }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-player no href', function (done) {
+  it('oembed-player no href', function () {
     let mixin = mixins.find(m => m.id === 'oembed-player');
     let env = {
       wl: { oembed: { video: 'allow' } },
@@ -204,14 +199,14 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, []);
-      done(err);
-    });
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      []
+    ));
   });
 
 
-  it('oembed-photo', function (done) {
+  it('oembed-photo', function () {
     let mixin = mixins.find(m => m.id === 'oembed-photo');
     let env = {
       wl: { oembed: { photo: 'allow' } },
@@ -222,16 +217,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { type: 'image', href: '/foo', tags: [ 'image', 'oembed' ], media: {} }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-icon', function (done) {
+  it('oembed-icon', function () {
     let mixin = mixins.find(m => m.id === 'oembed-icon');
     let env = {
       data: { oembed: {
@@ -240,16 +235,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { type: 'image', href: '/foo', tags: [ 'image', 'oembed' ], media: {} }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-thumbnail', function (done) {
+  it('oembed-thumbnail', function () {
     let mixin = mixins.find(m => m.id === 'oembed-thumbnail');
     let env = {
       data: { oembed: {
@@ -258,16 +253,16 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { type: 'image', href: '/foo', tags: [ 'thumbnail', 'oembed' ], media: {} }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-rich', function (done) {
+  it('oembed-rich', function () {
     let mixin = mixins.find(m => m.id === 'oembed-rich');
     let env = {
       wl: { oembed: { rich: [ 'allow', 'reader', 'player', 'html5' ] } },
@@ -278,8 +273,9 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         {
           href: '/foo',
           tags: [ 'oembed', 'rich', 'reader', 'player', 'html5' ],
@@ -287,13 +283,12 @@ describe('mixins', function () {
           type: 'text/html',
           html: ''
         }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-rich with size', function (done) {
+  it('oembed-rich with size', function () {
     let mixin = mixins.find(m => m.id === 'oembed-rich');
     let env = {
       wl: { oembed: { rich: 'allow' } },
@@ -306,8 +301,9 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         {
           href: '/foo',
           tags: [ 'oembed', 'rich' ],
@@ -315,13 +311,12 @@ describe('mixins', function () {
           type: 'text/html',
           html: ''
         }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-rich no iframe', function (done) {
+  it('oembed-rich no iframe', function () {
     let mixin = mixins.find(m => m.id === 'oembed-rich');
     let env = {
       wl: { oembed: { rich: 'allow' } },
@@ -331,8 +326,9 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         {
           href: null,
           tags: [ 'oembed', 'rich' ],
@@ -341,13 +337,12 @@ describe('mixins', function () {
           /* eslint-disable no-undefined */
           html: undefined
         }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('oembed-rich inline', function (done) {
+  it('oembed-rich inline', function () {
     let mixin = mixins.find(m => m.id === 'oembed-rich');
     let env = {
       wl: { oembed: { rich: [ 'allow', 'reader', 'player', 'html5', 'inline' ] } },
@@ -358,8 +353,9 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         {
           href: null,
           html: '<iframe src="/foo" width="100" height="200"></iframe>',
@@ -367,13 +363,12 @@ describe('mixins', function () {
           media: {},
           type: 'text/html'
         }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('favicon', function (done) {
+  it('favicon', function () {
     let mixin = mixins.find(m => m.id === 'favicon');
     let env = {
       data: { links: { icon: [
@@ -383,31 +378,29 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { type: 'foo', href: 'bar', tags: [ 'icon' ], media: { width: 10, height: 15 } },
         { type: 'image', href: 'baz', tags: [ 'icon' ], media: {} }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 
 
-  it('favicon no links', function (done) {
+  it('favicon no links', function () {
     let mixin = mixins.find(m => m.id === 'favicon');
     let env = {
       data: { links: { test: [] } },
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, []);
-      done(err);
-    });
+    return mixin.fn(env)
+      .then(() => assert.deepStrictEqual(env.result.snippets, []));
   });
 
 
-  it('logo', function (done) {
+  it('logo', function () {
     let mixin = mixins.find(m => m.id === 'logo');
     let env = {
       data: { meta: [
@@ -416,11 +409,11 @@ describe('mixins', function () {
       result: { snippets: [] }
     };
 
-    mixin.fn(env, (err) => {
-      assert.deepStrictEqual(env.result.snippets, [
+    return mixin.fn(env).then(() => assert.deepStrictEqual(
+      env.result.snippets,
+      [
         { type: 'image', href: '/foo', tags: [ 'icon' ], media: {} }
-      ]);
-      done(err);
-    });
+      ]
+    ));
   });
 });

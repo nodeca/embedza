@@ -11,12 +11,10 @@ const Embedza = require('../');
 
 let cache = {
   data: {},
-  get: function (key, callback) {
-    callback(null, cache.data[key]);
-  },
-  set: function (key, value, callback) {
+  get: key => Promise.resolve(cache.data[key]),
+  set: (key, value) => {
     cache.data[key] = value;
-    callback(null);
+    return Promise.resolve();
   }
 };
 
