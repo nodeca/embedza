@@ -209,6 +209,25 @@ describe('API', function () {
     });
 
 
+    it('from cache, via callback', function (done) {
+      let embedza = new Embedza({
+        cache: {
+          get: () => Promise.resolve({ info: { foo: 'bar' } })
+        },
+        enabledProviders: [ 'test.com' ]
+      });
+
+      embedza.info('http://test.com/bla', (err, res) => {
+        if (err) {
+          done(err);
+          return;
+        }
+
+        assert.deepStrictEqual(res, { foo: 'bar' });
+        done();
+      });
+    });
+
     it('from cache with error', function () {
       let embedza = new Embedza({
         cache: {
@@ -241,13 +260,39 @@ describe('API', function () {
 
       return embedza.render('https://example.com/asd', 'inline')
         .then(res => {
+          server.done();
+
           assert.strictEqual(
             res.html,
             '<a class="ez-domain-example_com ez-inline" target="_blank" ' +
             'href="https://example.com/asd" rel="nofollow">test</a>'
           );
-          server.done();
         });
+    });
+
+
+    it('inline, via callback', function (done) {
+      let embedza = new Embedza({ enabledProviders: [ 'example.com' ] });
+      let server = nock('https://example.com')
+        .get('/asd')
+        .reply(200, '<head><meta name="title" value="test"></head>');
+
+      embedza.render('https://example.com/asd', 'inline', (err, res) => {
+        server.done();
+
+        if (err) {
+          done(err);
+          return;
+        }
+
+        assert.strictEqual(
+          res.html,
+          '<a class="ez-domain-example_com ez-inline" target="_blank" ' +
+          'href="https://example.com/asd" rel="nofollow">test</a>'
+        );
+
+        done();
+      });
     });
 
 
@@ -278,7 +323,7 @@ describe('API', function () {
     });
 
 
-    it('bar url', function () {
+    it('bad url', function () {
       let embedza = new Embedza({ enabledProviders: [ 'badurl.badurl' ] });
 
       return embedza.render('http://badurl.badurl/asd', 'inline')
@@ -286,6 +331,25 @@ describe('API', function () {
         .catch(err => {
           assert.strictEqual(err.message, 'getaddrinfo ENOTFOUND badurl.badurl badurl.badurl:80');
         });
+    });
+
+    it('bad url', function () {
+      let embedza = new Embedza({ enabledProviders: [ 'badurl.badurl' ] });
+
+      return embedza.render('http://badurl.badurl/asd', 'inline')
+        .then(() => { throw new Error('error should be thrown here'); })
+        .catch(err => {
+          assert.strictEqual(err.message, 'getaddrinfo ENOTFOUND badurl.badurl badurl.badurl:80');
+        });
+    });
+
+
+    // coverage
+    it('input that prodices no data', function () {
+      let embedza = new Embedza();
+
+      return embedza.render(null)
+        .then(res => assert.equal(res, null));
     });
   });
 });

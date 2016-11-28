@@ -160,20 +160,6 @@ describe('mixins after', function () {
   });
 
 
-  it.skip('image-size own `__loadImageSize__`', function (done) {
-    let mixin = mixinsAfter.find(m => m.id === 'image-size');
-    let env = {
-      self: { __loadImageSize__: (__, cb) => { cb('err'); } },
-      result: { snippets: [ { type: 'image', href: 'http://example.com/1.jpg' } ] }
-    };
-
-    mixin.fn(env, err => {
-      assert.strictEqual(err, 'err');
-      done();
-    });
-  });
-
-
   it('image-size cache get error', function () {
     let mixin = mixinsAfter.find(m => m.id === 'image-size');
     let env = {
