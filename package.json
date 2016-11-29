@@ -43,6 +43,7 @@
     "report-coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls.js && rm -rf ./coverage",
     "install": "node support/install",
     "start": "node support/server",
-    "build-demo": "rm -rf ./demo/embedza.js && browserify -r ./ -s embedza -o ./demo/embedza.js"
+    "build-demo": "rm -rf ./demo/embedza.js && browserify -r ./ -s embedza -o ./demo/embedza.js",
+    "gh-pages": "git subtree split --prefix demo -b gh-pages && git push -f origin gh-pages:gh-pages && git branch -D gh-pages"
   }
 }
