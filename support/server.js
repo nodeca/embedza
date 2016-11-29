@@ -29,8 +29,9 @@ embedza.forEach(rule => {
 express()
   .use(express.static(path.join(__dirname, 'assets')))
   .use(express.static(path.join(__dirname, '..', 'assets')))
-  .set('view engine', 'jade')
+  .set('view engine', 'pug')
   .set('views', path.join(__dirname, 'assets'))
+
   .get('/', function (req, res, next) {
     let url = req.query.url;
     let info;
@@ -67,6 +68,7 @@ express()
       })
       .catch(next);
   })
+
   /* eslint-disable no-unused-vars */
   .use(function (err, req, res, next) {
     res.render('index', {
@@ -76,6 +78,7 @@ express()
     });
   })
   /* eslint-enable no-unused-vars */
+
   .listen(3000, function () {
     let host = this.address().address;
     let port = this.address().port;

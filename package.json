@@ -31,10 +31,10 @@
     "eslint": "^3.9.1",
     "express": "^4.13.1",
     "istanbul": "^0.4.1",
-    "jade": "^1.11.0",
     "mocha": "^3.1.2",
     "nock": "^9.0.2",
-    "proclaim": "^3.4.4"
+    "proclaim": "^3.4.4",
+    "pug": "^2.0.0-beta6"
   },
   "scripts": {
     "lint": "eslint .",
