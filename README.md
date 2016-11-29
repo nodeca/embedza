@@ -41,14 +41,10 @@ Render player for youtube video:
 ```javascript
 var embedza = require('embedza')();
 
-embedza.render('https://www.youtube.com/watch?v=JrZSfMiVC88', 'block', function (err, html) {
-  if (err) {
-    throw err;
-  }
-
-  if (html) {
-    console.log(html);
-  }
+embedza.render('https://www.youtube.com/watch?v=JrZSfMiVC88', 'block')
+  .then(result => {
+    if (result) console.log(result.html, result.type);
+  });
 });
 ```
 
@@ -67,32 +63,38 @@ Creates new `Embedza` instance with specified options:
   methods. Default stub does nothing.
 
 
-### .render(url, type [, callback])
+### .render(url, type [, callback]) -> Promise
 
 Try to create HTML snippet of requested type by URL.
 
 - __url__ (String|Object) - content url or result of `.info()`.
 - __type__ ([String]|String) - format name or list of suitable formats
   by priority ('block', 'inline')
-- __callback__ (Function) - `function (err, result)`
-    - `result.html` - html code
-    - `result.type` - matched format type
 
-If callback not specified, result returned as a `Promise`.
+Returns:
+
+- `result.html` - html code
+- `result.type` - matched format type
+
+If url can not be rendered - returns null. On remote errors fails with
+error info.
 
 
-### .info(url [, callback])
+### .info(url [, callback]) -> Promise
 
 Similar to `.render()`, but returns object with full url description.
 
 - __url__ (String) - resource URL.
-- __callback__ (Function) - `function (err, result)`, result is:
-  - `result.domain` - domain plugin id ('youtube.com', 'vimeo.com', ...)
-  - `result.src` - source url
-  - `result.meta` - title, description, site
-  - `result.snippets` - snippets data: type, tags, href, media, html
 
-If callback not specified, result returned as a `Promise`.
+Returns:
+
+- `result.domain` - domain plugin id ('youtube.com', 'vimeo.com', ...)
+- `result.src` - source url
+- `result.meta` - title, description, site
+- `result.snippets` - snippets data: type, tags, href, media, html
+
+If url info does not exists - returns null. On remote errors fails with
+error info.
 
 
 ### .forEach(fn(rule))
