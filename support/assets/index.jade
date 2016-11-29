@@ -8,14 +8,13 @@ html
     meta(name='viewport' content='width=device-width, initial-scale=1')
 
     script(src='https://cdn.polyfill.io/v2/polyfill.js?features=default-3.6')
-
     script(src='https://code.jquery.com/jquery-3.1.1.min.js')
-
     script(src='https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js')
+
     link(rel='stylesheet' href='https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.css')
+    link(rel='stylesheet' href='https://cdn.jsdelivr.net/fontawesome/4.7.0/css/font-awesome.min.css')
 
     link(rel='stylesheet' href='index.css')
-
     script(src='player.js')
 
     style.
@@ -30,7 +29,12 @@ html
 
   body
     .container
-      h2 Embedza Demo
+      h2
+        | Embedza Demo
+        a.fa.fa-github.pull-right(
+          href='https://github.com/nodeca/embedza'
+          target='_blank'
+          style='color:inherit;text-decoration:none;')
 
       p
         | Convert links to known providers into embeddable html content
@@ -43,7 +47,7 @@ html
           .input-group
             input.form-control(
               type='text'
-              placeholder='URL to embed'
+              placeholder='https://www.youtube.com/watch?v=o0u4M6vppCI'
               name='url'
               value=url
             )
@@ -53,19 +57,18 @@ html
       if err
         .alert.alert-danger(role='alert')!=err
 
-      if json
-        ul.nav.nav-tabs
-          li(role='presentation').active
-            a(href='#tab-block' role='role' data-toggle='tab') Block
-          li(role='presentation')
-            a(href='#tab-inline' role='role' data-toggle='tab') Inline
-          li(role='presentation')
-            a(href='#tab-json' role='role' data-toggle='tab') JSON
-          li.pull-right(role='presentation')
-            a(href='#tab-providers' role='role' data-toggle='tab') Providers
-        .tab-content
-          #tab-block.tab-pane.active(role='tabpanel')!= block
-          #tab-inline.tab-pane(role='tabpanel')!= inline
-          #tab-json.tab-pane(role='tabpanel')
-            pre!= json
-          #tab-providers.tab-pane(role='tabpanel')!= providers.join('<br>')
+      ul.nav.nav-tabs
+        li(role='presentation').active
+          a(href='#tab-block' role='role' data-toggle='tab') Block
+        li(role='presentation')
+          a(href='#tab-inline' role='role' data-toggle='tab') Inline
+        li(role='presentation')
+          a(href='#tab-json' role='role' data-toggle='tab') JSON
+        li.pull-right(role='presentation')
+          a(href='#tab-providers' role='role' data-toggle='tab') Providers
+      .tab-content
+        #tab-block.tab-pane.active(role='tabpanel')!= block || ''
+        #tab-inline.tab-pane(role='tabpanel')!= inline || ''
+        #tab-json.tab-pane(role='tabpanel')
+          pre!= json || ''
+        #tab-providers.tab-pane(role='tabpanel')!= providers.join('<br>')

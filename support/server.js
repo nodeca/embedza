@@ -34,37 +34,44 @@ express()
   .get('/', function (req, res) {
     let url = req.query.url;
 
+    let result = {
+      url,
+      providers
+    };
+
     if (url) {
       embedza.info(url, (err, data) => {
         if (err) {
-          res.render('index', { err: err.toString(), url });
+          result.err = err.toString();
+          res.render('index', result);
           return;
         }
 
         if (!data) {
-          res.render('index', { url });
+          result.err = 'Can not recognize url';
+          res.render('index', result);
           return;
         }
 
         embedza.render(data, 'block', (err, block) => {
           if (err) {
-            res.render('index', { err: err.toString(), url });
+            result.err = err.toString();
+            res.render('index', result);
             return;
           }
 
           embedza.render(data, 'inline', (err, inline) => {
             if (err) {
-              res.render('index', { err: err.toString(), url });
+              result.err = err.toString();
+              res.render('index', result);
               return;
             }
 
-            res.render('index', {
-              json: JSON.stringify(data, null, 2),
-              inline: inline ? inline.html : null,
-              block: block ? block.html : null,
-              url,
-              providers
-            });
+            result.json = JSON.stringify(data, null, 2);
+            result.inline = inline ? inline.html : null;
+            result.block = block ? block.html : null;
+
+            res.render('index', result);
           });
         });
       });
@@ -72,7 +79,7 @@ express()
       return;
     }
 
-    res.render('index', { url });
+    res.render('index', result);
   })
   .listen(3000, function () {
     let host = this.address().address;
