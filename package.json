@@ -24,8 +24,7 @@
     "got": "^6.6.3",
     "js-yaml": "^3.3.1",
     "lodash": "^4.0.0",
-    "probe-image-size": "^2.0.1",
-    "require-all": "^2.0.0"
+    "probe-image-size": "^2.0.1"
   },
   "devDependencies": {
     "coveralls": "^2.11.9",
@@ -38,11 +37,12 @@
     "proclaim": "^3.4.4"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/eslint .",
-    "test": "npm run lint && ./node_modules/.bin/mocha",
-    "coverage": "rm -rf coverage && ./node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
-    "report-coveralls": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "lint": "eslint .",
+    "test": "npm run lint && mocha",
+    "coverage": "rm -rf coverage && istanbul cover _mocha",
+    "report-coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls.js && rm -rf ./coverage",
     "install": "node support/install",
-    "start": "node support/server"
+    "start": "node support/server",
+    "build-demo": "rm -rf ./demo/embedza.js && browserify -r ./ -s embedza -o ./demo/embedza.js"
   }
 }

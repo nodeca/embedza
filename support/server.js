@@ -20,6 +20,11 @@ let cache = {
 
 let embedza = new Embedza({ cache });
 
+let providers = [];
+
+embedza.forEach(rule => {
+  if (rule.enabled) providers.push(rule.id);
+});
 
 express()
   .use(express.static(path.join(__dirname, 'assets')))
@@ -57,7 +62,8 @@ express()
               json: JSON.stringify(data, null, 2),
               inline: inline ? inline.html : null,
               block: block ? block.html : null,
-              url
+              url,
+              providers
             });
           });
         });
