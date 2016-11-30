@@ -1,3 +1,14 @@
+2.0.0 / WIP
+------------------
+
+- API change: rewrite all methods to promises. You may need to update `.cache`
+  methods. Callback in `.info()` & `.render()` are still supported but not
+  recommended for use.
+- Added `option.request` (in constructor) to customize params of external
+  requests been done by embedza.
+- Live demo (serverless).
+
+
 1.2.4 / 2016-11-02
 ------------------
 
