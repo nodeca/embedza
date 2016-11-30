@@ -9,6 +9,11 @@ const Cache       = require('../lib/cache');
 const got         = require('got');
 
 
+function createBuffer(src, opts) {
+  return Buffer.from ? Buffer.from(src, opts) : new Buffer(src, opts);
+}
+
+
 describe('mixins after', function () {
   it('resolve-href', function () {
     let mixin = mixinsAfter.find(m => m.id === 'resolve-href');
@@ -187,7 +192,7 @@ describe('mixins after', function () {
 
   it('image-size cache set error', function () {
     // 1x1 transparent gif
-    let demoImage = new Buffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
+    let demoImage = createBuffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
     let server = nock('http://example.com')
       .get('/1.jpg')
       .reply(200, demoImage);
@@ -220,8 +225,8 @@ describe('mixins after', function () {
 
   it('image-size', function () {
     // 1x1 transparent gif
-    let demoImage = new Buffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
-    let badImage  = new Buffer('0000', 'base64');
+    let demoImage = createBuffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
+    let badImage  = createBuffer('0000', 'base64');
 
     let server = nock('http://example.com')
       .get('/1.jpg')
