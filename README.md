@@ -18,6 +18,9 @@ Key feature:
 - Easy to customize and extend.
 - Dev server to test your changes.
 
+[**Live Demo**](https://nodeca.github.io/embedza/) (browser-only, restricted to
+vimeo, run local dev server to see more).
+
 
 Install
 -------
