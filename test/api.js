@@ -99,6 +99,40 @@ describe('API', function () {
   });
 
 
+  it('Default user agent', function () {
+    let embedza = new Embedza();
+    let server = nock('https://example.com')
+      .get('/asd')
+      .reply(function () {
+        if (/^embedza/.test(this.req.headers['user-agent'])) return [ 200, '' ];
+        return [ 503, '' ];
+      });
+
+    return embedza.request('https://example.com/asd')
+      .then(() => server.done());
+  });
+
+
+  it('Custom user agent', function () {
+    let embedza = new Embedza({
+      request: {
+        headers: {
+          'user-agent': 'foobar'
+        }
+      }
+    });
+    let server = nock('https://example.com')
+      .get('/asd')
+      .reply(function () {
+        if (/^foo/.test(this.req.headers['user-agent'])) return [ 200, '' ];
+        return [ 503, '' ];
+      });
+
+    return embedza.request('https://example.com/asd')
+      .then(() => server.done());
+  });
+
+
   describe('.addDomain()', function () {
 
     it('.addDomain() with domain name', function () {

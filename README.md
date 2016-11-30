@@ -64,6 +64,9 @@ Creates new `Embedza` instance with specified options:
   default `true`.
 - __cache__ - object with `.get(key, callback)` and `.set(key, value, callback)`
   methods. Default stub does nothing.
+- __request__ (optional) - any options for external requests, as described
+  in [`got` docs](https://github.com/sindresorhus/got). For example, you can
+  customize user agent header.
 
 
 ### .render(url, type [, callback]) -> Promise
