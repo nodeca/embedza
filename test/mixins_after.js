@@ -135,7 +135,7 @@ describe('mixins after', function () {
 
     return mixin.fn(env)
       .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => assert.strictEqual(err.message, 'Invalid URI "badurlbadurlbadurlbadurl.png"'));
+      .catch(err => proclaim.match(err.message, /ENOTFOUND badurlbadurlbadurlbadurl[.]png/));
   });
 
 
