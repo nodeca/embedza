@@ -6,6 +6,7 @@
   recommended for use.
 - Added `option.request` (in constructor) to customize params of external
   requests been done by embedza.
+- `err.status` -> `err.statusCode`
 - Live demo (serverless).
 
 
