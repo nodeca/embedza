@@ -1,4 +1,4 @@
-2.0.0 / WIP
+2.0.0 / 2016-12-03
 ------------------
 
 - API change: rewrite all methods to promises. You may need to update `.cache`
