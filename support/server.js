@@ -42,8 +42,9 @@ express()
     };
 
     if (!url) {
-      res.render('index', result);
-      return;
+      result.url = url = 'https://www.youtube.com/watch?v=o0u4M6vppCI';
+      // res.render('index', result);
+      // return;
     }
 
     Promise.resolve()

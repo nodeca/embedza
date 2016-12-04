@@ -21,11 +21,23 @@ html
       @media (min-width: 768px) {
         .container { max-width: 730px; }
       }
-      .tab-content { margin-top: 15px; }
       body {
         padding-bottom: 20px;
         overflow: scroll;
       }
+      .url-form {
+        margin-top: 1em;
+        margin-bottom: 2em;
+      }
+      .samples {
+        font-size: 13px;
+        margin-top: .5em;
+      }
+      .quicklink {
+        display: block;
+        color: #999;
+      }
+      .tab-content { margin-top: 15px; }
 
   body
     .container
@@ -42,10 +54,10 @@ html
 
       br
 
-      form(method='get')
+      form.url-form(method='get')
         .form-group
           .input-group
-            input.form-control(
+            input#url-input.form-control(
               type='text'
               placeholder='https://www.youtube.com/watch?v=o0u4M6vppCI'
               name='url'
@@ -53,6 +65,15 @@ html
             )
             span.input-group-btn
               button.btn.btn-primary(type='submit') Submit
+          .samples
+            a.quicklink(
+              href='https://vimeo.com/channels/staffpicks/135373919'
+              title='Click to see result'
+            ) https://vimeo.com/channels/staffpicks/135373919
+            a.quicklink(
+              href='https://www.youtube.com/watch?v=AqHZJe6306k'
+              title='Click to see result'
+            ) https://www.youtube.com/watch?v=AqHZJe6306k
 
       if err
         .alert.alert-danger(role='alert')!=err
@@ -72,3 +93,12 @@ html
         #tab-json.tab-pane(role='tabpanel')
           pre!= json || ''
         #tab-providers.tab-pane(role='tabpanel')!= providers.join('<br>')
+
+    script.
+      $(function () {
+        $('.quicklink').on('click', function (event) {
+          event.preventDefault();
+          $('#url-input').val($(this).attr('href'));
+          $('form').submit();
+        })
+      });
