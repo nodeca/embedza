@@ -79,9 +79,9 @@ express()
   })
   /* eslint-enable no-unused-vars */
 
-  .listen(3000, function () {
+  .listen(process.env.PORT || 3000, function () {
     let host = this.address().address;
     let port = this.address().port;
 
-    console.log('Embedza listening at http://%s:%s', host, port);
+    console.log(`Embedza listening at http://${host}:${port}`);
   });
