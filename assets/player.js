@@ -1,7 +1,5 @@
 $(document).on('click', '.ez-player-placeholder', function (event) {
-  if (event.target.nodeName === 'A') {
-    return;
-  }
+  if (event.target.nodeName === 'A') return;
 
   var $el = $(this);
 

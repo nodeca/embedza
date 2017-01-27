@@ -1,6 +1,5 @@
-.ez-block {
+.ez-player-container {
   position: relative;
-  display: block;
   height: 0;
   padding: 0;
   overflow: hidden;
@@ -29,11 +28,11 @@
   transition: transform .2s ease;
 }
 
-.ez-player:hover .ez-player-picture {
+.ez-player-placeholder:hover .ez-player-picture {
   transform: scale(1.03, 1.03);
 }
 
-.ez-block-frame {
+.ez-player-frame {
   position: absolute;
   top: 0;
   bottom: 0;
