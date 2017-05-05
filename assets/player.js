@@ -1,5 +1,8 @@
 $(document).on('click', '.ez-player-placeholder', function (event) {
-  if (event.target.nodeName === 'A') return;
+  // Click on title => follow link
+  if ($(event.target).hasClass('ez-player-title')) return;
+
+  event.preventDefault();
 
   var $el = $(this);
 
