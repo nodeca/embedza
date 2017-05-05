@@ -1,3 +1,10 @@
+2.2.0 / 2017-05-05
+------------------
+
+- Improve player placeholder layout. All area should be
+  clickable without JS.
+
+
 2.1.0 / 2017-01-27
 ------------------
 
