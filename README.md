@@ -41,7 +41,8 @@ Example
 Render player for youtube video:
 
 ```javascript
-var embedza = require('embedza')();
+const Embedza = require('embedza');
+const embedza = new Embedza();
 
 embedza.render('https://www.youtube.com/watch?v=JrZSfMiVC88', 'block')
   .then(result => {
@@ -164,8 +165,9 @@ override it. For example to force use cache only.
 Manage available templates:
 
 ```js
-var _ = require('lodash');
-var embedza = require('embedza')();
+const _       = require('lodash');
+const Embedza = require('embedza');
+const embedza = new Embedza();
 
 // Customize templates
 embedza.templates['default_inline'] = _.template('...template code...', { variable: 'self' });
