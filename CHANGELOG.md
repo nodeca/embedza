@@ -1,3 +1,10 @@
+2.3.0 / 2017-06-08
+------------------
+
+- Maintenance, deps bump. `got` v6 -> v7. Timout option may work a bit
+  different but should not affect result.
+
+
 2.2.0 / 2017-05-05
 ------------------
 

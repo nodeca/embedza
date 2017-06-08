@@ -1,6 +1,6 @@
 {
   "name": "embedza",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Create HTML snippets/embeds from URLs using info from oEmbed, Open Graph, meta tags.",
   "keywords": [
     "youtube",
