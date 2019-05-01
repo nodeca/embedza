@@ -2,6 +2,7 @@
 
 
 const assert   = require('assert');
+const proclaim = require('proclaim');
 const Embedza  = require('..');
 const nock     = require('nock');
 
@@ -362,9 +363,7 @@ describe('API', function () {
 
       return embedza.render('http://badurl.badurl/asd', 'inline')
         .then(() => { throw new Error('error should be thrown here'); })
-        .catch(err => {
-          assert.strictEqual(err.message, 'getaddrinfo ENOTFOUND badurl.badurl badurl.badurl:80');
-        });
+        .catch(err => proclaim.match(err.message, /getaddrinfo ENOTFOUND badurl[.]badurl/));
     });
 
     it('bad url', function () {
@@ -372,9 +371,7 @@ describe('API', function () {
 
       return embedza.render('http://badurl.badurl/asd', 'inline')
         .then(() => { throw new Error('error should be thrown here'); })
-        .catch(err => {
-          assert.strictEqual(err.message, 'getaddrinfo ENOTFOUND badurl.badurl badurl.badurl:80');
-        });
+        .catch(err => proclaim.match(err.message, /getaddrinfo ENOTFOUND badurl[.]badurl/));
     });
 
 

@@ -135,7 +135,7 @@ describe('mixins after', function () {
 
     return mixin.fn(env)
       .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => proclaim.match(err.message, /ENOTFOUND badurlbadurlbadurlbadurl[.]png/));
+      .catch(err => proclaim.match(err.message, /Invalid URI/));
   });
 
 
@@ -352,6 +352,6 @@ describe('mixins after', function () {
 
     return mixin.fn(env)
       .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => proclaim.match(err.message, /ECONNREFUSED/));
+      .catch(err => proclaim.match(err.message, /Invalid URL/));
   });
 });
