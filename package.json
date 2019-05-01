@@ -43,7 +43,6 @@
     "coverage": "rm -rf coverage && istanbul cover _mocha",
     "report-coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls.js && rm -rf ./coverage",
     "install": "node support/install",
-    "start": "node support/server",
-    "heroku-postbuild": "npm install express pug"
+    "start": "node support/server"
   }
 }
