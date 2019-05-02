@@ -3,6 +3,7 @@
 
 - Requires node.js v10+.
 - Deps bump.
+- Removed callbacks support.
 
 
 2.3.0 / 2017-06-08

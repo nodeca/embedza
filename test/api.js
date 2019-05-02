@@ -244,25 +244,6 @@ describe('API', function () {
     });
 
 
-    it('from cache, via callback', function (done) {
-      let embedza = new Embedza({
-        cache: {
-          get: () => Promise.resolve({ info: { foo: 'bar' } })
-        },
-        enabledProviders: [ 'test.com' ]
-      });
-
-      embedza.info('http://test.com/bla', (err, res) => {
-        if (err) {
-          done(err);
-          return;
-        }
-
-        assert.deepStrictEqual(res, { foo: 'bar' });
-        done();
-      });
-    });
-
     it('from cache with error', function () {
       let embedza = new Embedza({
         cache: {
@@ -303,31 +284,6 @@ describe('API', function () {
             'href="https://example.com/asd" rel="nofollow">test</a>'
           );
         });
-    });
-
-
-    it('inline, via callback', function (done) {
-      let embedza = new Embedza({ enabledProviders: [ 'example.com' ] });
-      let server = nock('https://example.com')
-        .get('/asd')
-        .reply(200, '<head><meta name="title" value="test"></head>');
-
-      embedza.render('https://example.com/asd', 'inline', (err, res) => {
-        server.done();
-
-        if (err) {
-          done(err);
-          return;
-        }
-
-        assert.strictEqual(
-          res.html,
-          '<a class="ez-domain-example_com ez-inline" target="_blank" ' +
-          'href="https://example.com/asd" rel="nofollow">test</a>'
-        );
-
-        done();
-      });
     });
 
 

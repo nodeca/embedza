@@ -62,14 +62,14 @@ Creates new `Embedza` instance with specified options:
 
 - __enabledProviders__ - array of enabled providers or `true` for all providers,
   default `true`.
-- __cache__ - object with `.get(key, callback)` and `.set(key, value, callback)`
+- __cache__ - object with `.get(key) -> Promise` and `.set(key, value) -> Promise`
   methods. Default stub does nothing.
 - __request__ (optional) - any options for external requests, as described
   in [`got` docs](https://github.com/sindresorhus/got). For example, you can
   customize user agent header.
 
 
-### .render(url, type [, callback]) -> Promise
+### .render(url, type) -> Promise
 
 Try to create HTML snippet of requested type by URL.
 
@@ -86,7 +86,7 @@ If url can not be rendered - returns null. On remote errors fails with
 error info.
 
 
-### .info(url [, callback]) -> Promise
+### .info(url) -> Promise
 
 Similar to `.render()`, but returns object with full url description.
 
@@ -132,7 +132,7 @@ Add add data fetcher. Options:
 
 - __id__ (String) - fetcher name.
 - __priority__ (Number) - optional, run priority, default - `0`.
-- __fn__ (Function) - fetcher handler, `function (env, callback)`.
+- __fn__ (Function) - fetcher handler, `async function (env)`.
 
 
 ### .addMixin(options)
@@ -140,7 +140,7 @@ Add add data fetcher. Options:
 Add mixin (data handler). Options:
 
 - __id__ (String) - mixin name.
-- __fn__ (Function) - mixin handler, `function (env, callback)`.
+- __fn__ (Function) - mixin handler, `async function (env)`.
 
 
 ### .addMixinAfter(options)
@@ -149,7 +149,7 @@ Add post-processor "after" handler. The same as `.addMixin`, but handlers
 are axecuted after all mixins. Options:
 
 - __id__ (String) - post-processor name.
-- __fn__ (Function) - post-processor handler, `function (env, callback)`.
+- __fn__ (Function) - post-processor handler, `async function (env)`.
 
 
 ## Advanced customization
