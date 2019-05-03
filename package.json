@@ -28,17 +28,17 @@
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
     "express": "^4.16.4",
-    "istanbul": "^0.4.1",
     "mocha": "^6.1.4",
     "nock": "^10.0.6",
+    "nyc": "^14.1.0",
     "pug": "^2.0.3",
     "supertest": "^4.0.2"
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run lint && mocha",
-    "coverage": "rm -rf coverage && istanbul cover _mocha",
-    "report-coveralls": "istanbul cover _mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls.js && rm -rf ./coverage",
+    "test": "npm run lint && nyc mocha",
+    "coverage": "npm run test && nyc report --reporter html",
+    "report-coveralls": "nyc report --reporter=text-lcov | coveralls",
     "install": "node support/install",
     "start": "node support/server"
   }

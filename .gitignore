@@ -1,5 +1,6 @@
 config/domains_conf.json
 coverage
+.nyc_output
 node_modules
 *.log
 *.swp

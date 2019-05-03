@@ -49,11 +49,11 @@ describe('youtube.com', function () {
       .query({ format: 'json', url: 'https://m.youtube.com/watch?v=CCCCnrwxzDs' })
       .reply(200, 'foo');
 
-    return embedza.info('https://m.youtube.com/#/watch?v=CCCCnrwxzDs')
-      .catch(err => {
-        assert.strictEqual(err.message, "YouTube fetcher: Can't parse oembed JSON response");
-        server.done();
-      });
+    await assert.rejects(
+      embedza.info('https://m.youtube.com/#/watch?v=CCCCnrwxzDs'),
+      /YouTube fetcher: Can't parse oembed JSON response/
+    );
+    server.done();
   });
 
 

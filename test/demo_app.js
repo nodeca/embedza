@@ -1,6 +1,9 @@
 'use strict';
 
 
+const { spawn } = require('child_process');
+
+
 describe('Embedza demo', function () {
   var app;
 
@@ -9,18 +12,17 @@ describe('Embedza demo', function () {
 
 
   before(function (done) {
-    app = require('child_process').spawn(
+    app = spawn(
       'node',
       [ '../support/server.js' ],
       {
         cwd: __dirname,
-        env: Object.assign({}, process.env, { PORT: PORT }),
-        stdio: 'inherit'
+        env: Object.assign({}, process.env, { PORT: PORT })
       }
     );
 
-    // Wait a bit until app bind port
-    setTimeout(done, 1000);
+    // Wait console ouput of executed child (ready then)
+    app.stdout.once('data', () => done());
   });
 
 
