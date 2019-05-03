@@ -2,7 +2,6 @@
 
 
 const assert   = require('assert');
-const proclaim = require('proclaim');
 const nock     = require('nock');
 const fetchers = require('../lib/fetchers');
 const got      = require('got');
@@ -10,7 +9,7 @@ const got      = require('got');
 
 describe('fetchers', function () {
 
-  it('meta bad response', function () {
+  it('meta bad response', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(500, '');
@@ -24,16 +23,16 @@ describe('fetchers', function () {
       data: {}
     };
 
-    return fetcher.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => {
-        server.done();
-        assert.strictEqual(err.message, 'Meta fetcher: Bad response code: 500');
-      });
+    await assert.rejects(
+      fetcher.fn(env),
+      /Meta fetcher: Bad response code: 500/
+    );
+
+    server.done();
   });
 
 
-  it('meta empty body', function () {
+  it('meta empty body', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, '');
@@ -47,14 +46,13 @@ describe('fetchers', function () {
       data: {}
     };
 
-    return fetcher.fn(env).then(() => {
-      server.done();
-      assert.deepEqual(env.data, { meta: [], links: {} });
-    });
+    await fetcher.fn(env);
+    server.done();
+    assert.deepStrictEqual(env.data, { meta: [], links: Object.create(null) });
   });
 
 
-  it('meta connection error', function () {
+  it('meta connection error', async function () {
     let fetcher = fetchers.find(m => m.id === 'meta');
     let env = {
       src: 'badurlbadurlbadurlbadurl',
@@ -63,15 +61,14 @@ describe('fetchers', function () {
       }
     };
 
-    return fetcher.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err =>
-        proclaim.match(err.message, /ENOTFOUND badurlbadurlbadurlbadurl/)
-      );
+    await assert.rejects(
+      fetcher.fn(env),
+      /ENOTFOUND badurlbadurlbadurlbadurl/
+    );
   });
 
 
-  it('meta', function () {
+  it('meta', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, `
@@ -99,30 +96,31 @@ describe('fetchers', function () {
       data: {}
     };
 
-    return fetcher.fn(env).then(() => {
-      server.done();
-      assert.deepEqual(env.data, {
-        meta: [
-          { name: 'foo1', value: 'bar1' },
-          { name: 'foo2', value: 'bar2' },
-          { name: 'foo3', value: 'bar3' },
-          { name: 'html-title', value: 'html title' }
+    await fetcher.fn(env);
+
+    server.done();
+
+    assert.deepStrictEqual(env.data, {
+      meta: [
+        { name: 'foo1', value: 'bar1' },
+        { name: 'foo2', value: 'bar2' },
+        { name: 'foo3', value: 'bar3' },
+        { name: 'html-title', value: 'html title' }
+      ],
+      links: Object.assign(Object.create(null), {
+        baz1: [
+          { rel: 'baz1', type: 'baz1/type', title: 'baz1 title' },
+          { rel: 'baz1', type: 'baz11/type', title: 'baz11 title' }
         ],
-        links: {
-          baz1: [
-            { rel: 'baz1', type: 'baz1/type', title: 'baz1 title' },
-            { rel: 'baz1', type: 'baz11/type', title: 'baz11 title' }
-          ],
-          baz2: [
-            { name: 'baz2', title: 'baz2 title' }
-          ]
-        }
-      });
+        baz2: [
+          { name: 'baz2', title: 'baz2 title' }
+        ]
+      })
     });
   });
 
 
-  it('oembed bad response', function () {
+  it('oembed bad response', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(504, '');
@@ -135,16 +133,15 @@ describe('fetchers', function () {
       data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => {
-        server.done();
-        assert.strictEqual(err.message, 'Oembed fetcher: Bad response code: 504');
-      });
+    await assert.rejects(
+      fetcher.fn(env),
+      /Oembed fetcher: Bad response code: 504/
+    );
+    server.done();
   });
 
 
-  it('oembed no links', function () {
+  it('oembed no links', async function () {
     let fetcher = fetchers.find(m => m.id === 'oembed');
     let env = {
       self: {
@@ -153,12 +150,12 @@ describe('fetchers', function () {
       data: { links: {} }
     };
 
-    return fetcher.fn(env)
-      .then(() => assert(!env.data.oembed));
+    await fetcher.fn(env);
+    assert(!env.data.oembed);
   });
 
 
-  it('oembed connection error', function () {
+  it('oembed connection error', async function () {
     let fetcher = fetchers.find(m => m.id === 'oembed');
     let env = {
       self: {
@@ -167,15 +164,14 @@ describe('fetchers', function () {
       data: { links: { alternate: [ { type: 'text/json+oembed', href: 'badurlbadurlbadurlbadurl' } ] } }
     };
 
-    return fetcher.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err =>
-        proclaim.match(err.message, /ENOTFOUND badurlbadurlbadurlbadurl/)
-      );
+    await assert.rejects(
+      fetcher.fn(env),
+      /ENOTFOUND badurlbadurlbadurlbadurl/
+    );
   });
 
 
-  it('oembed JSON', function () {
+  it('oembed JSON', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, { foo: 'bar' }, { 'content-type': 'application/json' });
@@ -188,14 +184,13 @@ describe('fetchers', function () {
       data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env).then(() => {
-      server.done();
-      assert.deepStrictEqual(env.data.oembed, { foo: 'bar' });
-    });
+    await fetcher.fn(env);
+    server.done();
+    assert.deepStrictEqual(env.data.oembed, { foo: 'bar' });
   });
 
 
-  it('oembed bad JSON', function () {
+  it('oembed bad JSON', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, 'aaa', { 'content-type': 'application/json' });
@@ -208,16 +203,15 @@ describe('fetchers', function () {
       data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => {
-        server.done();
-        assert.strictEqual(err.message, "Oembed fetcher: Can't parse oembed JSON response");
-      });
+    await assert.rejects(
+      fetcher.fn(env),
+      /Oembed fetcher: Can't parse oembed JSON response/
+    );
+    server.done();
   });
 
 
-  it('oembed bad content type', function () {
+  it('oembed bad content type', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, 'aaa', { 'content-type': 'plain/text' });
@@ -230,16 +224,15 @@ describe('fetchers', function () {
       data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => {
-        server.done();
-        assert.strictEqual(err.message, 'Oembed fetcher: Unknown oembed response content-type: plain/text');
-      });
+    await assert.rejects(
+      fetcher.fn(env),
+      /Oembed fetcher: Unknown oembed response content-type: plain\/text/
+    );
+    server.done();
   });
 
 
-  it('oembed no links', function () {
+  it('oembed no links', async function () {
     let fetcher = fetchers.find(m => m.id === 'oembed');
     let env = {
       self: {
@@ -248,11 +241,12 @@ describe('fetchers', function () {
       data: { links: { alternate: [ { href: '/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env);
+    await fetcher.fn(env);
+    assert.deepStrictEqual(env.data, { links: { alternate: [ { href: '/foo.bar' } ] } });
   });
 
 
-  it('oembed XML', function () {
+  it('oembed XML', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, `
@@ -270,14 +264,13 @@ describe('fetchers', function () {
       data: { links: { alternative: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env).then(() => {
-      server.done();
-      assert.deepStrictEqual(env.data.oembed, { foo: 'bar' });
-    });
+    await fetcher.fn(env);
+    server.done();
+    assert.deepStrictEqual(env.data.oembed, { foo: 'bar' });
   });
 
 
-  it('oembed XML empty body', function () {
+  it('oembed XML empty body', async function () {
     let server = nock('http://example.com')
       .get('/test/foo.bar')
       .reply(200, '', { 'content-type': 'text/xml' });
@@ -290,9 +283,8 @@ describe('fetchers', function () {
       data: { links: { alternative: [ { type: 'text/json+oembed', href: 'http://example.com/test/foo.bar' } ] } }
     };
 
-    return fetcher.fn(env).then(() => {
-      server.done();
-      assert.deepStrictEqual(env.data.oembed, {});
-    });
+    await fetcher.fn(env);
+    server.done();
+    assert.deepStrictEqual(env.data.oembed, {});
   });
 });

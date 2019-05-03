@@ -7,44 +7,42 @@ const nock    = require('nock');
 
 
 describe('youtube.com', function () {
-  it('real request', function () {
+  it('real request', async function () {
     let embedza = new Embedza();
 
-    return embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw')
-      .then(res => {
-        assert.deepStrictEqual(res.meta, { title: 'Me at the zoo', site: 'YouTube', description: '' });
-      });
+    const res = await embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw');
+    assert.deepStrictEqual(res.meta, { title: 'Me at the zoo', site: 'YouTube', description: '' });
   });
 
 
-  it('404', function () {
+  it('404', async function () {
     let embedza = new Embedza();
     let server = nock('http://www.youtube.com')
       .get('/oembed')
       .query({ format: 'json', url: 'https://www.youtube.com/watch?v=CCCCnrwxzDs' })
       .reply(404, '');
 
-    return embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs&list=asd')
-      .catch(err => {
-        assert.strictEqual(err.message, 'YouTube fetcher: Bad response code: 404');
-        server.done();
-      });
+    await assert.rejects(
+      embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs&list=asd'),
+      /YouTube fetcher: Bad response code: 404/
+    );
+    server.done();
   });
 
 
-  it('connection error', function () {
+  it('connection error', async function () {
     let embedza = new Embedza();
 
     embedza.request = () => Promise.reject('err');
 
-    return embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs')
-      .catch(err => {
-        assert.strictEqual(err, 'err');
-      });
+    await assert.rejects(
+      embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs'),
+      /^err$/
+    );
   });
 
 
-  it('bad JSON', function () {
+  it('bad JSON', async function () {
     let embedza = new Embedza();
     let server = nock('http://www.youtube.com')
       .get('/oembed')
@@ -59,17 +57,15 @@ describe('youtube.com', function () {
   });
 
 
-  it('astral characters', function () {
+  it('astral characters', async function () {
     let embedza = new Embedza();
     let server = nock('http://www.youtube.com')
       .get('/oembed')
       .query({ format: 'json', url: 'https://www.youtube.com/watch?v=CCCCnrwxzDs' })
       .reply(200, '{ "title": "\\U0001f61c EMOJI \\\\U0001f61c \\U00000040" }');
 
-    return embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs')
-      .then(res => {
-        assert.strictEqual(res.meta.title, '😜 EMOJI \\U0001f61c @');
-        server.done();
-      });
+    const res = await embedza.info('https://www.youtube.com/watch?v=CCCCnrwxzDs');
+    assert.strictEqual(res.meta.title, '😜 EMOJI \\U0001f61c @');
+    server.done();
   });
 });

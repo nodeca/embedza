@@ -2,14 +2,13 @@
 
 
 const assert   = require('assert');
-const proclaim = require('proclaim');
 const Embedza  = require('..');
 const nock     = require('nock');
 
 
 describe('API', function () {
 
-  it('.addFetcher()', function () {
+  it('.addFetcher()', async function () {
     let embedza = new Embedza();
 
     embedza.addFetcher({
@@ -20,13 +19,14 @@ describe('API', function () {
 
     embedza.addDomain('example.org');
 
-    return embedza.render('http://example.org/12345', 'block')
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => assert.strictEqual(err, 'test fetcher error'));
+    await assert.rejects(
+      embedza.render('http://example.org/12345', 'block'),
+      /test fetcher error/
+    );
   });
 
 
-  it('.addMixin()', function () {
+  it('.addMixin()', async function () {
     let embedza = new Embedza();
 
     embedza.addMixin({
@@ -40,13 +40,14 @@ describe('API', function () {
       body: '{}'
     });
 
-    return embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block')
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => assert.strictEqual(err, 'test mixin error'));
+    await assert.rejects(
+      embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block'),
+      /test mixin error/
+    );
   });
 
 
-  it('.addMixinAfter()', function () {
+  it('.addMixinAfter()', async function () {
     let embedza = new Embedza();
 
     embedza.addMixinAfter({
@@ -60,9 +61,10 @@ describe('API', function () {
       body: '{}'
     });
 
-    return embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block')
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => assert.strictEqual(err, 'test mixin after error'));
+    await assert.rejects(
+      embedza.render('https://vimeo.com/channels/staffpicks/135373919', 'block'),
+      /test mixin after error/
+    );
   });
 
 
@@ -78,7 +80,7 @@ describe('API', function () {
   });
 
 
-  it('.forEach() - disable domain', function () {
+  it('.forEach() - disable domain', async function () {
     let embedza = new Embedza();
 
     embedza.forEach(function (domain) {
@@ -93,14 +95,14 @@ describe('API', function () {
       body: '{}'
     });
 
-    return embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw')
-      .then(res => assert.equal(res, null))
-      .then(() => embedza.info('https://vimeo.com/channels/staffpicks/135373919'))
-      .then(res => assert.strictEqual(res.src, 'https://vimeo.com/channels/staffpicks/135373919'));
+    let res = await embedza.info('https://www.youtube.com/watch?v=jNQXAC9IVRw');
+    assert.strictEqual(res, null);
+    res = await embedza.info('https://vimeo.com/channels/staffpicks/135373919');
+    assert.strictEqual(res.src, 'https://vimeo.com/channels/staffpicks/135373919');
   });
 
 
-  it('Default user agent', function () {
+  it('Default user agent', async function () {
     let embedza = new Embedza();
     let server = nock('https://example.com')
       .get('/asd')
@@ -109,12 +111,12 @@ describe('API', function () {
         return [ 503, '' ];
       });
 
-    return embedza.request('https://example.com/asd')
-      .then(() => server.done());
+    await embedza.request('https://example.com/asd');
+    server.done();
   });
 
 
-  it('Custom user agent', function () {
+  it('Custom user agent', async function () {
     let embedza = new Embedza({
       request: {
         headers: {
@@ -129,14 +131,14 @@ describe('API', function () {
         return [ 503, '' ];
       });
 
-    return embedza.request('https://example.com/asd')
-      .then(() => server.done());
+    await embedza.request('https://example.com/asd');
+    server.done();
   });
 
 
   describe('.addDomain()', function () {
 
-    it('.addDomain() with domain name', function () {
+    it('.addDomain() with domain name', async function () {
       let embedza = new Embedza();
 
       // Mock `.request`
@@ -145,28 +147,27 @@ describe('API', function () {
         body: ''
       });
 
-      return embedza.info('https://example.com/')
-        .then(res => assert.equal(res, null))
-        .then(() => {
-          embedza.addDomain('example.com');
+      let res = await embedza.info('https://example.com/');
+      assert.strictEqual(res, null);
 
-          return embedza.info('https://example.com/');
-        })
-        .then(res => assert.strictEqual(res.src, 'https://example.com/'));
+      embedza.addDomain('example.com');
+
+      res = await embedza.info('https://example.com/');
+      assert.strictEqual(res.src, 'https://example.com/');
     });
 
 
-    it('.addDomain() disabled', function () {
+    it('.addDomain() disabled', async function () {
       let embedza = new Embedza({ enabledProviders: [ 'test.com', 'youtube.com' ] });
 
       embedza.addDomain('example.com');
 
-      return embedza.info('https://example.com/asd')
-        .then(res => assert.equal(res, null));
+      const res = await embedza.info('https://example.com/asd');
+      assert.strictEqual(res, null);
     });
 
 
-    it('.addDomain() with options', function () {
+    it('.addDomain() with options', async function () {
       let embedza = new Embedza();
       let server = nock('https://example.com')
         .get('/asd')
@@ -207,31 +208,31 @@ describe('API', function () {
           env => {
             env.result.mixinsAfterExtraTest = true;
             return Promise.resolve();
-          }
+          },
+          'convert-str-int'
         ]
       });
 
-      return embedza.info('https://example.com/asd').then(res => {
-        assert.deepEqual(res.snippets, [ {
-          type: 'image',
-          href: 'https://example.com/123.jpg',
-          tags: [ 'thumbnail', 'twitter', 'ssl' ],
-          media: { width: 222, height: 333 }
-        } ]);
+      const res = await embedza.info('https://example.com/asd');
+      assert.deepStrictEqual(res.snippets, [ {
+        type: 'image',
+        href: 'https://example.com/123.jpg',
+        tags: [ 'thumbnail', 'twitter', 'ssl' ],
+        media: { width: 222, height: 333 }
+      } ]);
 
-        assert.ok(res.fetchersExtraTest1);
-        assert.ok(res.fetchersExtraTest2);
-        assert.ok(res.mixinsExtraTest);
-        assert.ok(res.mixinsAfterExtraTest);
+      assert.ok(res.fetchersExtraTest1);
+      assert.ok(res.fetchersExtraTest2);
+      assert.ok(res.mixinsExtraTest);
+      assert.ok(res.mixinsAfterExtraTest);
 
-        server.done();
-      });
+      server.done();
     });
   });
 
 
   describe('.info()', function () {
-    it('from cache', function () {
+    it('from cache', async function () {
       let embedza = new Embedza({
         cache: {
           get: () => Promise.resolve({ info: { foo: 'bar' } })
@@ -239,12 +240,12 @@ describe('API', function () {
         enabledProviders: [ 'test.com' ]
       });
 
-      return embedza.info('http://test.com/bla')
-        .then(res => assert.deepStrictEqual(res, { foo: 'bar' }));
+      const res = await embedza.info('http://test.com/bla');
+      assert.deepStrictEqual(res, { foo: 'bar' });
     });
 
 
-    it('from cache with error', function () {
+    it('from cache with error', async function () {
       let embedza = new Embedza({
         cache: {
           get: () => Promise.reject('err')
@@ -252,91 +253,90 @@ describe('API', function () {
         enabledProviders: [ 'test.com' ]
       });
 
-      return embedza.info('http://test.com/bla')
-        .then(() => { throw new Error('error should be thrown here'); })
-        .catch(err => assert.strictEqual(err, 'err'));
+      await assert.rejects(
+        embedza.info('http://test.com/bla'),
+        /err/
+      );
     });
 
 
-    it('bad url', function () {
+    it('bad url', async function () {
       let embedza = new Embedza();
 
-      return embedza.info('badurl')
-        .then(res => assert.ok(!res));
+      const res = await embedza.info('badurl');
+      assert.ok(!res);
     });
   });
 
 
   describe('.render()', function () {
-    it('inline', function () {
+    it('inline', async function () {
       let embedza = new Embedza({ enabledProviders: [ 'example.com' ] });
       let server = nock('https://example.com')
         .get('/asd')
         .reply(200, '<head><meta name="title" value="test"></head>');
 
-      return embedza.render('https://example.com/asd', 'inline')
-        .then(res => {
-          server.done();
+      const res = await embedza.render('https://example.com/asd', 'inline');
 
-          assert.strictEqual(
-            res.html,
-            '<a class="ez-domain-example_com ez-inline" target="_blank" ' +
-            'href="https://example.com/asd" rel="nofollow">test</a>'
-          );
-        });
+      server.done();
+
+      assert.strictEqual(
+        res.html,
+        '<a class="ez-domain-example_com ez-inline" target="_blank" ' +
+        'href="https://example.com/asd" rel="nofollow">test</a>'
+      );
     });
 
 
-    it('not enough data', function () {
+    it('not enough data', async function () {
       let embedza = new Embedza({ enabledProviders: [ 'example.com' ] });
       let server = nock('https://example.com')
         .get('/asd')
         .reply(200, '');
 
-      return embedza.render('https://example.com/asd', [ 'player', 'rich', 'test' ])
-        .then(res => {
-          assert.ok(!res);
-          server.done();
-        });
+      const res = await embedza.render('https://example.com/asd', [ 'player', 'rich', 'test' ]);
+      assert.ok(!res);
+      server.done();
     });
 
 
-    it('inline with info', function () {
+    it('inline with info', async function () {
       let embedza = new Embedza();
 
-      return embedza.render({ domain: 'a', src: 'b', meta: { title: 'c' } }, 'inline')
-        .then(res => {
-          assert.strictEqual(
-            res.html,
-            '<a class="ez-domain-a ez-inline" target="_blank" href="b" rel="nofollow">c</a>'
-          );
-        });
+      const res = await embedza.render({ domain: 'a', src: 'b', meta: { title: 'c' } }, 'inline');
+
+      assert.strictEqual(
+        res.html,
+        '<a class="ez-domain-a ez-inline" target="_blank" href="b" rel="nofollow">c</a>'
+      );
     });
 
 
-    it('bad url', function () {
+    it('bad url', async function () {
       let embedza = new Embedza({ enabledProviders: [ 'badurl.badurl' ] });
 
-      return embedza.render('http://badurl.badurl/asd', 'inline')
-        .then(() => { throw new Error('error should be thrown here'); })
-        .catch(err => proclaim.match(err.message, /getaddrinfo ENOTFOUND badurl[.]badurl/));
+      await assert.rejects(
+        embedza.render('http://badurl.badurl/asd', 'inline'),
+        /getaddrinfo ENOTFOUND badurl[.]badurl/
+      );
     });
 
-    it('bad url', function () {
+    it('bad url', async function () {
       let embedza = new Embedza({ enabledProviders: [ 'badurl.badurl' ] });
 
-      return embedza.render('http://badurl.badurl/asd', 'inline')
-        .then(() => { throw new Error('error should be thrown here'); })
-        .catch(err => proclaim.match(err.message, /getaddrinfo ENOTFOUND badurl[.]badurl/));
+      await assert.rejects(
+        embedza.render('http://badurl.badurl/asd', 'inline'),
+        /getaddrinfo ENOTFOUND badurl[.]badurl/
+      );
     });
 
 
     // coverage
-    it('input that prodices no data', function () {
+    it('input that prodices no data', async function () {
       let embedza = new Embedza();
 
-      return embedza.render(null)
-        .then(res => assert.equal(res, null));
+      const res = await embedza.render(null);
+      assert.strictEqual(res, null);
     });
   });
 });

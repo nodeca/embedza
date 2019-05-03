@@ -2,7 +2,6 @@
 
 
 const assert      = require('assert');
-const proclaim    = require('proclaim');
 const nock        = require('nock');
 const mixinsAfter = require('../lib/mixins_after');
 const Cache       = require('../lib/cache');
@@ -15,7 +14,7 @@ function createBuffer(src, opts) {
 
 
 describe('mixins after', function () {
-  it('resolve-href', function () {
+  it('resolve-href', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'resolve-href');
     let env = {
       src: 'http://example.com/test/',
@@ -30,7 +29,8 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => assert.deepStrictEqual(
+    await mixin.fn(env);
+    assert.deepStrictEqual(
       env.result.snippets,
       [
         { href: 'http://example.com/img/foo.png' },
@@ -39,11 +39,11 @@ describe('mixins after', function () {
         { href: 'http://example.com/test.png' },
         { href: '' }
       ]
-    ));
+    );
   });
 
 
-  it('ssl-force', function () {
+  it('ssl-force', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'ssl-force');
     let env = {
       result: {
@@ -54,14 +54,13 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => {
-      assert.deepStrictEqual(env.result.snippets[0].tags, [ 'ssl' ]);
-      assert.deepStrictEqual(env.result.snippets[1].tags, []);
-    });
+    await mixin.fn(env);
+    assert.deepStrictEqual(env.result.snippets[0].tags, [ 'ssl' ]);
+    assert.deepStrictEqual(env.result.snippets[1].tags, []);
   });
 
 
-  it('merge', function () {
+  it('merge', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'merge');
     let env = {
       result: {
@@ -73,17 +72,18 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => assert.deepStrictEqual(
+    await mixin.fn(env);
+    assert.deepStrictEqual(
       env.result.snippets,
       [
         { href: 'http://example.com/1', tags: [ 'a', 'b', 'c', 'd' ], media: { width: 10, height: 20 } },
         { href: 'http://example.com/2', tags: [ 'd', 'e' ], media: { height: 30 } }
       ]
-    ));
+    );
   });
 
 
-  it('set-autoplay', function () {
+  it('set-autoplay', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'set-autoplay');
     let env = {
       config: {},
@@ -95,14 +95,13 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => {
-      assert.strictEqual(env.result.snippets[0].media.autoplay, 'autoplay=1');
-      assert.deepStrictEqual(env.result.snippets[1].media, {});
-    });
+    await mixin.fn(env);
+    assert.strictEqual(env.result.snippets[0].media.autoplay, 'autoplay=1');
+    assert.deepStrictEqual(env.result.snippets[1].media, {});
   });
 
 
-  it('convert-str-int', function () {
+  it('convert-str-int', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'convert-str-int');
     let env = {
       result: {
@@ -114,15 +113,14 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => {
-      assert.deepStrictEqual(env.result.snippets[0].media, { width: 10, height: 20, duration: 30, foo: '40' });
-      assert.deepStrictEqual(env.result.snippets[1].media, {});
-      assert.deepStrictEqual(env.result.snippets[2].media, {});
-    });
+    await mixin.fn(env);
+    assert.deepStrictEqual(env.result.snippets[0].media, { width: 10, height: 20, duration: 30, foo: '40' });
+    assert.deepStrictEqual(env.result.snippets[1].media, {});
+    assert.deepStrictEqual(env.result.snippets[2].media, {});
   });
 
 
-  it('image-size connection error', function () {
+  it('image-size connection error', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'image-size');
     let env = {
       self: { __options__: { cache: new Cache() } },
@@ -133,13 +131,14 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => proclaim.match(err.message, /Invalid URI/));
+    await assert.rejects(
+      mixin.fn(env),
+      /Invalid URI/
+    );
   });
 
 
-  it('image-size cache', function () {
+  it('image-size cache', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'image-size');
     let env = {
       self: {
@@ -160,14 +159,15 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => assert.deepStrictEqual(
+    await mixin.fn(env);
+    assert.deepStrictEqual(
       env.result.snippets[0].media,
       { width: 1, height: 1 }
-    ));
+    );
   });
 
 
-  it('image-size cache get error', function () {
+  it('image-size cache get error', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'image-size');
     let env = {
       self: {
@@ -184,13 +184,14 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => assert.strictEqual(err, 'err'));
+    await assert.rejects(
+      mixin.fn(env),
+      /^err$/
+    );
   });
 
 
-  it('image-size cache set error', function () {
+  it('image-size cache set error', async function () {
     // 1x1 transparent gif
     let demoImage = createBuffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
     let server = nock('http://example.com')
@@ -214,16 +215,15 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => {
-        server.done();
-        assert.strictEqual(err, 'err');
-      });
+    await assert.rejects(
+      mixin.fn(env),
+      /^err$/
+    );
+    server.done();
   });
 
 
-  it('image-size', function () {
+  it('image-size', async function () {
     // 1x1 transparent gif
     let demoImage = createBuffer('R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', 'base64');
     let badImage  = createBuffer('0000', 'base64');
@@ -257,22 +257,21 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => {
-      server.done();
+    await mixin.fn(env);
+    server.done();
 
-      assert.deepStrictEqual(env.result.snippets[0].media, { width: 1, height: 1 });
-      assert.deepStrictEqual(env.result.snippets[1].media, { width: 1, height: 1 });
-      assert.deepStrictEqual(env.result.snippets[2].media, {});
-      assert.deepStrictEqual(env.result.snippets[3].media, {});
-      assert.deepStrictEqual(env.result.snippets[4].media, { width: 10, height: 20 });
-      assert.ok(!env.result.snippets[5].media);
-      assert.deepStrictEqual(env.result.snippets[6].media, { width: 1, height: 0.5 });
-      assert.ok(!env.result.snippets[7].media);
-    });
+    assert.deepStrictEqual(env.result.snippets[0].media, { width: 1, height: 1 });
+    assert.deepStrictEqual(env.result.snippets[1].media, { width: 1, height: 1 });
+    assert.deepStrictEqual(env.result.snippets[2].media, {});
+    assert.deepStrictEqual(env.result.snippets[3].media, {});
+    assert.deepStrictEqual(env.result.snippets[4].media, { width: 10, height: 20 });
+    assert.ok(!env.result.snippets[5].media);
+    assert.deepStrictEqual(env.result.snippets[6].media, { width: 1, height: 0.5 });
+    assert.ok(!env.result.snippets[7].media);
   });
 
 
-  it('mime-detect', function () {
+  it('mime-detect', async function () {
     let server = nock('http://example.com')
       .head('/test/foo.bar')
       .reply(200, '', {
@@ -299,19 +298,18 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env).then(() => {
-      server.done();
+    await mixin.fn(env);
+    server.done();
 
-      assert.strictEqual(env.result.snippets.length, 3);
-      assert.strictEqual(env.result.snippets[0].type, 'text/html');
-      assert.deepStrictEqual(env.result.snippets[0].tags, [ 'html5' ]);
-      assert.strictEqual(env.result.snippets[1].type, 'video/mp4');
-      assert.strictEqual(env.result.snippets[2].type, 'old/test-type');
-    });
+    assert.strictEqual(env.result.snippets.length, 3);
+    assert.strictEqual(env.result.snippets[0].type, 'text/html');
+    assert.deepStrictEqual(env.result.snippets[0].tags, [ 'html5' ]);
+    assert.strictEqual(env.result.snippets[1].type, 'video/mp4');
+    assert.strictEqual(env.result.snippets[2].type, 'old/test-type');
   });
 
 
-  it('mime-detect bad response', function () {
+  it('mime-detect bad response', async function () {
     let server = nock('http://example.com')
       .head('/test/foo.bar')
       .reply(500, '');
@@ -328,16 +326,15 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => {
-        server.done();
-        assert.strictEqual(err.message, 'Mime-detect mixin after handler: Bad response code: 500');
-      });
+    await assert.rejects(
+      mixin.fn(env),
+      /Mime-detect mixin after handler: Bad response code: 500/
+    );
+    server.done();
   });
 
 
-  it('mime-detect connection error', function () {
+  it('mime-detect connection error', async function () {
     let mixin = mixinsAfter.find(m => m.id === 'mime-detect');
     let env = {
       self: {
@@ -350,8 +347,9 @@ describe('mixins after', function () {
       }
     };
 
-    return mixin.fn(env)
-      .then(() => { throw new Error('error should be thrown here'); })
-      .catch(err => proclaim.match(err.message, /Invalid URL/));
+    await assert.rejects(
+      mixin.fn(env),
+      /Invalid URL/
+    );
   });
 });
