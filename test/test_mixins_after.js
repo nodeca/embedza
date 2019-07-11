@@ -5,7 +5,11 @@ const assert      = require('assert');
 const nock        = require('nock');
 const mixinsAfter = require('../lib/mixins_after');
 const Cache       = require('../lib/cache');
-const got         = require('got');
+const _got        = require('got');
+
+function got(url, args) {
+  return _got(url, Object.assign({ retry: 0 }, args));
+}
 
 
 function createBuffer(src, opts) {
@@ -342,14 +346,14 @@ describe('mixins after', function () {
       },
       result: {
         snippets: [
-          { media: {}, href: 'http://' }
+          { media: {}, href: '!@#$%^&*' }
         ]
       }
     };
 
     await assert.rejects(
       mixin.fn(env),
-      /Invalid URL/
+      /URI malformed/
     );
   });
 });

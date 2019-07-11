@@ -4,7 +4,11 @@
 const assert   = require('assert');
 const nock     = require('nock');
 const fetchers = require('../lib/fetchers');
-const got      = require('got');
+const _got     = require('got');
+
+function got(url, args) {
+  return _got(url, Object.assign({ retry: 0 }, args));
+}
 
 
 describe('fetchers', function () {
