@@ -1,8 +1,8 @@
-3.0.0 / WIP
+3.0.0 / 2019-07-11
 ------------------
 
 - Requires node.js v10+.
-- Deps bump.
+- Deps bump. `got` option is now `retry` instead of `retries`.
 - Removed callbacks support.
 
 
