@@ -342,7 +342,7 @@ describe('mixins after', function () {
     let mixin = mixinsAfter.find(m => m.id === 'mime-detect');
     let env = {
       self: {
-        request: url => got(url, { retries: 0 })
+        request: url => got(url, { retry: 0 })
       },
       result: {
         snippets: [
@@ -353,7 +353,7 @@ describe('mixins after', function () {
 
     await assert.rejects(
       mixin.fn(env),
-      /URI malformed/
+      /Invalid URL/
     );
   });
 });

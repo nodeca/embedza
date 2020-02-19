@@ -59,7 +59,7 @@ describe('fetchers', function () {
   it('meta connection error', async function () {
     let fetcher = fetchers.find(m => m.id === 'meta');
     let env = {
-      src: 'badurlbadurlbadurlbadurl',
+      src: 'http://badurlbadurlbadurlbadurl',
       self: {
         request: got
       }
@@ -165,7 +165,7 @@ describe('fetchers', function () {
       self: {
         request: got
       },
-      data: { links: { alternate: [ { type: 'text/json+oembed', href: 'badurlbadurlbadurlbadurl' } ] } }
+      data: { links: { alternate: [ { type: 'text/json+oembed', href: 'http://badurlbadurlbadurlbadurl' } ] } }
     };
 
     await assert.rejects(

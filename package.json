@@ -20,17 +20,17 @@
   "dependencies": {
     "cheerio": "^0.22.0",
     "debug": "^4.1.1",
-    "got": "^9.6.0",
+    "got": "^10.5.7",
     "lodash": "^4.0.0",
-    "probe-image-size": "^4.0.0"
+    "probe-image-size": "^5.0.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.3",
     "eslint": "^6.0.1",
     "express": "^4.16.4",
-    "mocha": "^6.1.4",
-    "nock": "^11.0.0-beta.13",
-    "nyc": "^14.1.0",
+    "mocha": "^7.0.1",
+    "nock": "^12.0.0",
+    "nyc": "^15.0.0",
     "pug": "^2.0.3",
     "supertest": "^4.0.2"
   },
