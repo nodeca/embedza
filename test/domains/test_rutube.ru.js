@@ -6,7 +6,7 @@ const assert  = require('assert');
 
 
 describe('rutube.ru', function () {
-  it('real request', async function () {
+  it.skip('real request', async function () {
     let embedza = new Embedza();
 
     const res = await embedza.info('https://rutube.ru/video/c5daee24e06f0c29a5fdfd5d06b4ace6/');
