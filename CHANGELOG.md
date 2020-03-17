@@ -1,3 +1,10 @@
+4.0.0 / 2020-03-17
+------------------
+
+- Deps bump.
+- Drop rutube.ru support (service become unuseable).
+
+
 3.0.0 / 2019-07-11
 ------------------
 
