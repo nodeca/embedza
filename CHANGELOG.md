@@ -1,4 +1,4 @@
-4.0.1 / WIP
+4.0.1 / 2021-02-05
 ------------------
 
 - Switch youtube API requests to HTTPS.
