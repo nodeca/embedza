@@ -1,3 +1,9 @@
+4.0.1 / WIP
+------------------
+
+- Switch youtube API requests to HTTPS.
+
+
 4.0.0 / 2020-03-17
 ------------------
 
