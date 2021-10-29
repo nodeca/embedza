@@ -67,7 +67,7 @@ describe('fetchers', function () {
 
     await assert.rejects(
       fetcher.fn(env),
-      /ENOTFOUND badurlbadurlbadurlbadurl/
+      /(ENOTFOUND|EAI_AGAIN) badurlbadurlbadurlbadurl/
     );
   });
 
@@ -170,7 +170,7 @@ describe('fetchers', function () {
 
     await assert.rejects(
       fetcher.fn(env),
-      /ENOTFOUND badurlbadurlbadurlbadurl/
+      /(ENOTFOUND|EAI_AGAIN) badurlbadurlbadurlbadurl/
     );
   });
 

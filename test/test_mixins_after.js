@@ -137,7 +137,7 @@ describe('mixins after', function () {
 
     await assert.rejects(
       mixin.fn(env),
-      /Invalid URI/
+      /(Invalid URI|ENOTFOUND)/
     );
   });
 
